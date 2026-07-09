@@ -181,37 +181,12 @@ export function isMonosyllable(word: string): boolean {
   return nuclei <= 1;
 }
 
-// Returns the syllable the next word must START with (with fallback)
+// Returns the syllable the next word must START with. Siempre la sílaba
+// real, sin recortes: si no hay ninguna palabra que continúe esa sílaba
+// exacta, es una consecuencia de la palabra que se jugó, no algo que el
+// juego deba disimular.
 export function getChallengeSyllable(word: string): string {
-  const lastSyl = normalize(getLastSyllable(word));
-
-  if (hasWordsFor(lastSyl)) return lastSyl;
-
-  // Sin continuaciones para la sílaba completa (ej. "dormitorio" -> "rio",
-  // pero nada empieza con el diptongo "rio" salvo derivados de "río", que
-  // ahora cuentan como hiato). Preferimos recortar por atrás primero
-  // (RIO -> RI, nos quedamos con el ataque + núcleo) antes que por
-  // adelante (RIO -> IO, perdemos la "R"): recortar por atrás mantiene el
-  // sonido inicial real de la sílaba, así que se siente más parecido a
-  // "seguir la palabra anterior" en vez de saltar a un arranque distinto.
-  for (let len = lastSyl.length - 1; len >= 2; len--) {
-    const trimmed = lastSyl.slice(0, len);
-    if (hasWordsFor(trimmed)) return trimmed;
-  }
-
-  // Si tampoco hay nada, recortar por adelante como antes.
-  for (let i = 1; i < lastSyl.length - 1; i++) {
-    const trimmed = lastSyl.slice(i);
-    if (trimmed.length >= 2 && hasWordsFor(trimmed)) return trimmed;
-  }
-
-  return lastSyl.slice(-2);
-}
-
-function hasWordsFor(prefix: string): boolean {
-  const key = prefix.slice(0, 2);
-  const words = wordIndex.get(key) ?? [];
-  return words.some((w) => getFirstSyllable(w) === prefix);
+  return normalize(getLastSyllable(word));
 }
 
 export function wordStartsWithSyllable(word: string, syllable: string): boolean {
@@ -229,10 +204,14 @@ export function getCpuWord(syllable: string, usedWords: Set<string>): string | n
   return available[Math.floor(Math.random() * available.length)];
 }
 
+// "perro" (rro), "tierra" (rra) y "patio" (tio, hiato heredado de "tío")
+// terminan en sílabas que ninguna palabra puede continuar — dejarían al
+// jugador trabado en el primer movimiento sin haber elegido nada, así que
+// se sacaron de la lista.
 const STARTING_WORDS = [
-  "casa", "perro", "zapato", "mesa", "camino", "tierra", "tiempo", "fuerza",
+  "casa", "zapato", "mesa", "camino", "tiempo", "fuerza",
   "barco", "cielo", "piedra", "bosque", "ciudad", "campo", "puerta", "fuego",
-  "monte", "patio", "libro", "techo", "roca", "noche", "tarde", "mañana",
+  "monte", "libro", "techo", "roca", "noche", "tarde", "mañana",
 ];
 
 export function getStartingWord(): string {
