@@ -2,18 +2,26 @@ import Box from "@mui/material/Box";
 
 const ACCENT = "#e74c3c";
 
-const ROWS = [
+const ROWS_ES = [
   ["Q","W","E","R","T","Y","U","I","O","P"],
   ["A","S","D","F","G","H","J","K","L","Ñ"],
   ["Z","X","C","V","B","N","M","⌫"],
   ["Á","É","Í","Ó","Ú"],
 ];
 
+const ROWS_EN = [
+  ["Q","W","E","R","T","Y","U","I","O","P"],
+  ["A","S","D","F","G","H","J","K","L"],
+  ["Z","X","C","V","B","N","M","⌫"],
+];
+
 interface Props {
   onKey: (key: string) => void;
+  lang?: "es" | "en";
 }
 
-export default function VirtualKeyboard({ onKey }: Props) {
+export default function VirtualKeyboard({ onKey, lang = "es" }: Props) {
+  const ROWS = lang === "en" ? ROWS_EN : ROWS_ES;
   return (
     <Box sx={{
       display: { md: "none", xs: "block" },

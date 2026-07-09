@@ -5,14 +5,8 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Layout from "../components/Layout";
 import VirtualKeyboard from "../components/VirtualKeyboard";
-import {
-  normalize,
-  isValidWord,
-  isMonosyllable,
-  getChallengeSyllable,
-  getStartingWord,
-  wordStartsWithSyllable,
-} from "../utils/wordEngine";
+import { useLanguage } from "../i18n/LanguageContext";
+import { getGameEngine, WordGameEngine } from "../utils/gameEngine";
 import { maybeSaveBestChain } from "../utils/gameStore";
 
 const ACCENT = "#e74c3c";
@@ -23,7 +17,7 @@ type Phase = "idle" | "playing" | "gameover";
 interface GameState {
   phase: Phase;
   currentWord: string;
-  challengeSyllable: string;
+  challengeUnit: string;
   chain: string[];
   usedWords: Set<string>;
   score: number;
@@ -32,15 +26,15 @@ interface GameState {
   input: string;
 }
 
-function initGame(): GameState {
-  const startWord = getStartingWord();
-  const syl = getChallengeSyllable(startWord);
+function initGame(engine: WordGameEngine): GameState {
+  const startWord = engine.getStartingWord();
+  const unit = engine.getChallengeUnit(startWord);
   return {
     phase: "idle",
     currentWord: startWord,
-    challengeSyllable: syl,
+    challengeUnit: unit,
     chain: [startWord],
-    usedWords: new Set([normalize(startWord)]),
+    usedWords: new Set([engine.normalize(startWord)]),
     score: 0,
     timeLeft: TIMER_START,
     errorMsg: "",
@@ -85,7 +79,9 @@ function playErrorSound() {
 
 export default function Game() {
   const navigate = useNavigate();
-  const [state, setState] = useState<GameState>(initGame);
+  const { t, currentLanguage } = useLanguage();
+  const engine = getGameEngine(currentLanguage);
+  const [state, setState] = useState<GameState>(() => initGame(engine));
 
   // Timer
   useEffect(() => {
@@ -108,7 +104,7 @@ export default function Game() {
     setState((p) =>
       p.phase === "idle"
         ? { ...p, phase: "playing" }
-        : { ...initGame(), phase: "playing" }
+        : { ...initGame(engine), phase: "playing" }
     );
   }
 
@@ -117,25 +113,25 @@ export default function Game() {
       const word = p.input.trim().toLowerCase();
       const err = (msg: string) => { playErrorSound(); return { ...p, errorMsg: msg }; };
 
-      if (word.length < 3) return err("La palabra debe tener al menos 3 letras.");
-      if (!wordStartsWithSyllable(word, p.challengeSyllable))
-        return err(`La palabra debe empezar con "${p.challengeSyllable.toUpperCase()}".`);
-      if (!isValidWord(word)) return err("Esa palabra no existe en el diccionario.");
-      if (isMonosyllable(word)) return err("No valen monosílabos.");
-      if (p.usedWords.has(normalize(word))) return err("Esa palabra ya fue usada.");
+      if (word.length < 3) return err(t.errorTooShort);
+      if (!engine.unitMatchesWord(word, p.challengeUnit))
+        return err(t.errorWrongStart(p.challengeUnit.toUpperCase()));
+      if (!engine.isValidWord(word)) return err(t.errorNotInDictionary);
+      if (engine.isRejected(word)) return err(t.errorMonosyllable);
+      if (p.usedWords.has(engine.normalize(word))) return err(t.errorAlreadyUsed);
 
       playSuccessSound();
       const speedBonus = p.timeLeft >= 10 ? 5 : 0;
       const lengthBonus = Math.max(0, word.length - 4);
       const points = 10 + speedBonus + lengthBonus;
-      const newSyl = getChallengeSyllable(word);
+      const newUnit = engine.getChallengeUnit(word);
       const newUsed = new Set(p.usedWords);
-      newUsed.add(normalize(word));
+      newUsed.add(engine.normalize(word));
 
       return {
         ...p,
         currentWord: word.toUpperCase(),
-        challengeSyllable: newSyl,
+        challengeUnit: newUnit,
         chain: [...p.chain, word.toUpperCase()],
         usedWords: newUsed,
         score: p.score + points,
@@ -144,7 +140,7 @@ export default function Game() {
         input: "",
       };
     });
-  }, []);
+  }, [engine, t]);
 
   // Physical keyboard support
   useEffect(() => {
@@ -182,7 +178,7 @@ export default function Game() {
         <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
             <Typography sx={{ fontSize: 13, color: "#888", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
-              Palabra inicial
+              {t.startingWordLabel}
             </Typography>
             <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
               <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 36, fontFamily: "monospace", letterSpacing: 3 }}>
@@ -190,14 +186,14 @@ export default function Game() {
               </Typography>
             </Box>
             <Typography sx={{ fontSize: 14, color: "#666", textAlign: "center" }}>
-              Tomá la última sílaba y enganchá la siguiente palabra
+              {t.idleInstruction}
             </Typography>
           </Box>
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 20,
             py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
           }}>
-            ¡Empezar!
+            {t.startButton}
           </Button>
         </Box>
       </Layout>
@@ -211,19 +207,19 @@ export default function Game() {
         <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
             <Typography sx={{ fontSize: 52 }}>⏰</Typography>
-            <Typography sx={{ fontFamily: "Lobster, cursive", fontSize: 28, color: "#222" }}>¡Se acabó el tiempo!</Typography>
+            <Typography sx={{ fontFamily: "Lobster, cursive", fontSize: 28, color: "#222" }}>{t.gameOverTitle}</Typography>
             <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}`, textAlign: "center", mt: 1 }}>
-              <Typography sx={{ color: "#888", fontSize: 13, mb: 0.5 }}>Puntaje</Typography>
+              <Typography sx={{ color: "#888", fontSize: 13, mb: 0.5 }}>{t.scoreLabel}</Typography>
               <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 52 }}>{state.score}</Typography>
             </Box>
             <Typography sx={{ color: "#888", fontSize: 13 }}>
-              Cadena de {state.chain.length - 1} palabras
+              {t.chainOfWords(state.chain.length - 1)}
             </Typography>
           </Box>
 
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
-              Tu cadena
+              {t.yourChainLabel}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {state.chain.map((w, i) => (
@@ -244,10 +240,10 @@ export default function Game() {
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,
             py: 1.6, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
           }}>
-            Jugar de nuevo
+            {t.playAgainButton}
           </Button>
           <Button onClick={() => navigate("/")} sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>
-            Volver al inicio
+            {t.backToHomeButton}
           </Button>
         </Box>
       </Layout>
@@ -262,11 +258,11 @@ export default function Game() {
         {/* Score + timer */}
         <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>Puntaje</Typography>
+            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>{t.scoreLabel}</Typography>
             <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 28 }}>{state.score}</Typography>
           </Box>
           <Box sx={{ textAlign: "center" }}>
-            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>Palabras</Typography>
+            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>{t.wordsLabel}</Typography>
             <Typography sx={{ color: "#374151", fontWeight: 900, fontSize: 28 }}>{state.chain.length - 1}</Typography>
           </Box>
           <Box sx={{ width: 56, height: 56, borderRadius: "50%", border: `3px solid ${timerColor}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -277,7 +273,7 @@ export default function Game() {
         {/* Palabra actual + sílaba */}
         <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2.5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
-            Palabra actual
+            {t.currentWordLabel}
           </Typography>
           <Box sx={{ px: 2.5, py: 1, borderRadius: "10px", backgroundColor: "#e5e7eb", border: "1px solid #d1d5db" }}>
             <Typography sx={{ color: "#111", fontWeight: 900, fontSize: 27, fontFamily: "monospace", letterSpacing: 2 }}>
@@ -285,11 +281,11 @@ export default function Game() {
             </Typography>
           </Box>
           <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
-            Tu palabra debe empezar con
+            {t.mustStartWithLabel}
           </Typography>
           <Box sx={{ px: 2.5, py: 1, borderRadius: "8px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
             <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 27, fontFamily: "monospace", letterSpacing: 3 }}>
-              {state.challengeSyllable.toUpperCase()}
+              {state.challengeUnit.toUpperCase()}
             </Typography>
           </Box>
         </Box>
@@ -313,7 +309,7 @@ export default function Game() {
             color: state.input ? "#111" : "#bbb",
             width: "80%"
           }}>
-            {state.input || `Empezá con ${state.challengeSyllable.toUpperCase()}...`}
+            {state.input || t.inputPlaceholder(state.challengeUnit.toUpperCase())}
           </Typography>
           <Button onClick={submitWord} variant="contained" fullWidth sx={{
             backgroundColor: "#0d7e09ad", 
@@ -351,7 +347,7 @@ export default function Game() {
         {state.chain.length > 1 && (
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
             <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, mb: 1, fontWeight: 700 }}>
-              Cadena ({state.chain.length - 1})
+              {t.chainCount(state.chain.length - 1)}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {state.chain.slice(1).map((w, i) => (
@@ -367,7 +363,7 @@ export default function Game() {
 
       </Box>
 
-      <VirtualKeyboard onKey={handleVirtualKey} />
+      <VirtualKeyboard onKey={handleVirtualKey} lang={currentLanguage} />
     </Layout>
   );
 }

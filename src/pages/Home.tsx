@@ -4,15 +4,18 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import Layout from "../components/Layout";
+import LanguageSelector from "../components/LanguageSelector";
+import { useLanguage } from "../i18n/LanguageContext";
 import { getBestChain, BestChain } from "../utils/gameStore";
 
 const ACCENT = "#e74c3c";
 const CARD_BG = "#eb6f62";
-const CHAIN = ["CASA", "SAPO", "POZO", "ZORRO", "ROPERO"];
 
 export default function Home() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [bestChain, setBestChain] = useState<BestChain | null>(null);
+  const CHAIN = t.exampleChain;
 
   useEffect(() => {
     setBestChain(getBestChain());
@@ -26,7 +29,7 @@ export default function Home() {
 
   const nowHour = new Date().getHours();
   const greeting =
-    nowHour < 12 ? "Buenos días ☀️" : nowHour < 20 ? "Buenas tardes 🌤️" : "Buenas noches 🌙";
+    nowHour < 12 ? t.greetingMorning : nowHour < 20 ? t.greetingAfternoon : t.greetingEvening;
 
   return (
     <Layout>
@@ -36,14 +39,14 @@ export default function Home() {
           color: "#fff", fontWeight: 700, letterSpacing: "1px",
           fontFamily: "Lobster, cursive", textAlign: "center", width: "100%",
         }}>
-          Enganchado
+          {t.appName}
         </Typography>
 
         <Typography variant="h6" sx={{
           color: "rgba(255,255,255,0.64)", fontStyle: "italic",
           letterSpacing: "2px", textAlign: "center", fontSize: { xs: 18, md: 22 },
         }}>
-          pensá · enganchá · ganás
+          {t.tagline}
         </Typography>
 
         <Typography sx={{ color: "#ffe6e6", fontSize: 18, fontWeight: 600 }}>
@@ -51,7 +54,7 @@ export default function Home() {
         </Typography>
 
         <Typography sx={{ color: "#fff", fontSize: 24, fontWeight: 700, lineHeight: 1.4 }}>
-          ¿Listo para jugar Enganchado?
+          {t.readyToPlay}
         </Typography>
 
         {/* Card principal */}
@@ -63,7 +66,7 @@ export default function Home() {
             alignItems: "center", gap: 1.5, minHeight: 160,
           }}>
             <Typography sx={{ fontSize: 13, color: "#888", fontWeight: 700, mb: 0.5 }}>
-              Ejemplo de cadena
+              {t.exampleChainLabel}
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 1, justifyContent: "center" }}>
               {CHAIN.map((word, i) => (
@@ -87,8 +90,7 @@ export default function Home() {
               ))}
             </Box>
             <Typography sx={{ fontSize: 12, color: "#999", mt: 0.5, textAlign: "center" }}>
-              La última sílaba de <b style={{ color: "#374151" }}>ROPERO</b> es{" "}
-              <b style={{ color: ACCENT }}>RO</b> → tu palabra empieza con RO
+              {t.exampleExplanation}
             </Typography>
           </Box>
 
@@ -98,11 +100,11 @@ export default function Home() {
               borderRadius: 999, px: 4, py: 1.4, fontSize: 18,
               "&:hover": { backgroundColor: "#fff" },
             }}>
-              ¡JUGAR!
+              {t.playButton}
             </Button>
             <Box sx={{ textAlign: "right", color: "#fff", fontWeight: 700 }}>
-              <Typography sx={{ fontSize: 16 }}>MODO LIBRE</Typography>
-              <Typography sx={{ fontSize: 14, color: "rgba(255,255,255,0.8)" }}>¡A ver cuánto llegás!</Typography>
+              <Typography sx={{ fontSize: 16 }}>{t.freeModeLabel}</Typography>
+              <Typography sx={{ fontSize: 14, color: "rgba(255,255,255,0.8)" }}>{t.freeModeSub}</Typography>
             </Box>
           </Box>
         </Box>
@@ -111,13 +113,13 @@ export default function Home() {
         {bestChain && bestChain.words.length > 1 && (
           <Box sx={{ borderRadius: "16px", backgroundColor: "#fff", p: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
             <Typography sx={{ fontSize: 28, fontWeight: 800, color: "#222", mb: 0.5 }}>
-              Mejor Racha
+              {t.bestStreakTitle}
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#888", mb: 2 }}>
-              {bestChain.words.length - 1} palabras · {bestChain.score} puntos ·{" "}
+              {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel} ·{" "}
               {(() => {
                 const [y, m, d] = bestChain.date.split("-").map(Number);
-                return new Date(y, m - 1, d).toLocaleDateString("es-AR", {
+                return new Date(y, m - 1, d).toLocaleDateString(t.dateLocale, {
                   weekday: "long", day: "numeric", month: "long",
                 });
               })()}
@@ -147,24 +149,26 @@ export default function Home() {
         {/* Qué es */}
         <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
-            ¿Qué es Enganchado?
+            {t.whatIsTitle}
           </Typography>
           <Typography sx={{ color: "rgba(255,255,255,0.85)", lineHeight: 1.7 }}>
-            Enganchado es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?
+            {t.whatIsBody}
           </Typography>
         </Box>
 
         {/* Cómo jugar */}
         <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
-            ¿Cómo jugar?
+            {t.howToPlayTitle}
           </Typography>
           <Typography sx={{ color: "rgba(255,255,255,0.85)", lineHeight: 1.7 }}>
-            Te damos una palabra de inicio. Usá su última sílaba para arrancar la siguiente, y así sucesivamente. Tenés 15 segundos por turno. No valen monosílabos ni palabras repetidas. Cuanto más larga la cadena y más rápido respondés, más puntos sumás.
+            {t.howToPlayBody}
           </Typography>
         </Box>
 
       </Box>
+
+      <LanguageSelector />
     </Layout>
   );
 }

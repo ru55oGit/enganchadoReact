@@ -7,6 +7,7 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useLanguage } from "../../i18n/LanguageContext";
 
 const ACCENT = "#e74c3c";
 
@@ -24,6 +25,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const canvasRef = useRef<HTMLDivElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -120,7 +122,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
               fontFamily: "Lobster, cursive", fontSize: 40, color: ACCENT,
               cursor: "pointer", zIndex: 2, width: "max-content",
             }} onClick={() => window.location.replace("/")}>
-              Enganchado
+              {t.appName}
             </Box>
           </Box>
         )}
@@ -138,19 +140,19 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
         PaperProps={{ sx: { width: 280, background: "linear-gradient(180deg, #a34747 0%, #F44336 100%)" } }}>
         <Box sx={{ pt: 4, pb: 2 }}>
           <Box sx={{ textAlign: "center", fontFamily: "Lobster, cursive", fontSize: 32, color: "#fff", mb: 3, px: 2 }}>
-            Enganchado
+            {t.appName}
           </Box>
           <List>
             <ListItem disablePadding>
               <ListItemButton onClick={() => { setMenuOpen(false); navigate("/"); }}
                 sx={{ px: 3, py: 2, backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", "&:hover": { backgroundColor: "#f5f5f5" } }}>
-                <ListItemText primary="Inicio" primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
+                <ListItemText primary={t.drawerHome} primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
               </ListItemButton>
             </ListItem>
             <ListItem disablePadding>
               <ListItemButton onClick={() => { setMenuOpen(false); navigate("/game"); }}
                 sx={{ px: 3, py: 2, backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", "&:hover": { backgroundColor: "#f5f5f5" } }}>
-                <ListItemText primary="Jugar" primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
+                <ListItemText primary={t.drawerPlay} primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
               </ListItemButton>
             </ListItem>
           </List>
