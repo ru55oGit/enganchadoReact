@@ -279,16 +279,16 @@ export default function Game() {
           <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
             Palabra actual
           </Typography>
-          <Box sx={{ px: 3, py: 1.5, borderRadius: "10px", backgroundColor: "#e5e7eb", border: "1px solid #d1d5db" }}>
-            <Typography sx={{ color: "#111", fontWeight: 900, fontSize: 30, fontFamily: "monospace", letterSpacing: 2 }}>
+          <Box sx={{ px: 2.5, py: 1, borderRadius: "10px", backgroundColor: "#e5e7eb", border: "1px solid #d1d5db" }}>
+            <Typography sx={{ color: "#111", fontWeight: 900, fontSize: 27, fontFamily: "monospace", letterSpacing: 2 }}>
               {state.currentWord.toUpperCase()}
             </Typography>
           </Box>
           <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
             Tu palabra debe empezar con
           </Typography>
-          <Box sx={{ px: 3, py: 1, borderRadius: "8px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
-            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 30, fontFamily: "monospace", letterSpacing: 3 }}>
+          <Box sx={{ px: 2.5, py: 1, borderRadius: "8px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
+            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 27, fontFamily: "monospace", letterSpacing: 3 }}>
               {state.challengeSyllable.toUpperCase()}
             </Typography>
           </Box>
@@ -313,8 +313,9 @@ export default function Game() {
           position: "relative",
         }}>
           <Typography sx={{
-            fontSize: 22, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+            fontSize: 18, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
             color: state.input ? "#111" : "#bbb",
+            width: "80%"
           }}>
             {state.input || `Empezá con ${state.challengeSyllable.toUpperCase()}...`}
           </Typography>
@@ -325,7 +326,7 @@ export default function Game() {
             fontSize: 18,
             borderRadius: "8px",
             height: 54,
-            width: 54,
+            width: "20%",
             position: "absolute",
             right: 1,
           }}>

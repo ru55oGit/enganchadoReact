@@ -14,18 +14,28 @@ body {
   font-family: "Nunito", "Roboto", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: linear-gradient(
-    135deg,
-    #7d6e6e 16.67%,
-    #fff 0,
-    #fff 50%,
-    #7d6e6e 0,
-    #7d6e6e 66.67%,
-    #fff 0,
-    #fff
-  );
-  background-size: 4.24px 4.24px;
+  /* Rojo sólido de base: en mobile la app ocupa el 100% del ancho, así que
+     no debería asomar nada detrás, pero esto evita cualquier hairline de
+     redondeo que deje ver el fondo. El patrón a rayas es solo decorativo
+     para el "letterboxing" de escritorio (ver media query abajo). */
+  background: #a34747;
   min-height: 100vh;
+}
+
+@media (min-width: 900px) {
+  body {
+    background-image: linear-gradient(
+      135deg,
+      #7d6e6e 16.67%,
+      #fff 0,
+      #fff 50%,
+      #7d6e6e 0,
+      #7d6e6e 66.67%,
+      #fff 0,
+      #fff
+    );
+    background-size: 4.24px 4.24px;
+  }
 }
 
 #root {
