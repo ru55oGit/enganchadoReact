@@ -172,7 +172,7 @@ export default function Game() {
     }
   }
 
-  const timerColor = state.timeLeft <= 5 ? "#ef4444" : state.timeLeft <= 9 ? "#f97316" : "#22c55e";
+  const timerColor = state.timeLeft <= 5 ? "#f50909" : state.timeLeft <= 9 ? "#f0e808" : "#22c55e";
   const timerPct = (state.timeLeft / TIMER_START) * 100;
 
   // ── IDLE ──
@@ -294,28 +294,6 @@ export default function Game() {
           </Box>
         </Box>
 
-        {/* Input display (no native keyboard) */}
-        <Box sx={{
-          backgroundColor: "#fff", borderRadius: "10px",
-          border: `2px solid ${state.input ? ACCENT : "#d1d5db"}`,
-          minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "border-color 0.2s",
-        }}>
-          <Typography sx={{
-            fontSize: 22, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
-            color: state.input ? "#111" : "#bbb",
-          }}>
-            {state.input || `Empezá con ${state.challengeSyllable.toUpperCase()}...`}
-          </Typography>
-        </Box>
-
-        {/* Error */}
-        <Box sx={{ minHeight: 20, textAlign: "center", mt: -1 }}>
-          {state.errorMsg && (
-            <Typography sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
-          )}
-        </Box>
-
         {/* Barra de tiempo */}
         <Box sx={{ height: 8, backgroundColor: "rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden" }}>
           <Box sx={{
@@ -326,13 +304,48 @@ export default function Game() {
             transition: "width 0.9s linear, background-color 0.3s",
           }} />
         </Box>
+        {/* Input display (no native keyboard) */}
+        <Box sx={{
+          backgroundColor: "#fff", borderRadius: "10px",
+          border: `2px solid ${state.input ? ACCENT : "#d1d5db"}`,
+          minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "border-color 0.2s",
+          position: "relative",
+        }}>
+          <Typography sx={{
+            fontSize: 22, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+            color: state.input ? "#111" : "#bbb",
+          }}>
+            {state.input || `Empezá con ${state.challengeSyllable.toUpperCase()}...`}
+          </Typography>
+          <Button onClick={submitWord} variant="contained" fullWidth sx={{
+            backgroundColor: "#0d7e09ad", 
+            color: "#fff", 
+            fontWeight: 800, 
+            fontSize: 18,
+            borderRadius: "8px",
+            height: 54,
+            width: 54,
+            position: "absolute",
+            right: 1,
+          }}>
+             →
+          </Button>
+        </Box>
 
-        <Button onClick={submitWord} variant="contained" fullWidth sx={{
+        {/* Error */}
+        <Box sx={{ minHeight: 20, textAlign: "center", mt: -1 }}>
+          {state.errorMsg && (
+            <Typography sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
+          )}
+        </Box>
+
+        {/* <Button onClick={submitWord} variant="contained" fullWidth sx={{
           backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,
           py: 1.6, borderRadius: "10px", textTransform: "none", "&:hover": { backgroundColor: "#fff" },
         }}>
           Confirmar →
-        </Button>
+        </Button> */}
 
         {/* Cadena */}
         {state.chain.length > 1 && (
