@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import Layout from "../components/Layout";
+import VirtualKeyboard from "../components/VirtualKeyboard";
 import {
   normalize,
   isValidWord,
@@ -15,7 +15,7 @@ import {
 } from "../utils/wordEngine";
 import { maybeSaveBestChain } from "../utils/gameStore";
 
-const ACCENT = "#f97316";
+const ACCENT = "#e74c3c";
 const TIMER_START = 15;
 
 type Phase = "idle" | "playing" | "gameover";
@@ -48,28 +48,60 @@ function initGame(): GameState {
   };
 }
 
+function playSuccessSound() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(523, ctx.currentTime);
+    osc.frequency.setValueAtTime(784, ctx.currentTime + 0.1);
+    osc.frequency.setValueAtTime(1047, ctx.currentTime + 0.2);
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.35);
+  } catch { /* audio not supported */ }
+}
+
+function playErrorSound() {
+  try {
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "square";
+    osc.frequency.setValueAtTime(280, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.25);
+    gain.gain.setValueAtTime(0.25, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.25);
+  } catch { /* audio not supported */ }
+}
+
 export default function Game() {
   const navigate = useNavigate();
   const [state, setState] = useState<GameState>(initGame);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
+  // Timer
   useEffect(() => {
-    if (state.phase !== "playing") {
-      if (timerRef.current) clearInterval(timerRef.current);
-      return;
-    }
-    timerRef.current = setInterval(() => {
+    if (state.phase !== "playing") return;
+    const id = setInterval(() => {
       setState((prev) => {
+        if (prev.phase !== "playing") return prev;
         if (prev.timeLeft <= 1) {
-          if (timerRef.current) clearInterval(timerRef.current);
+          clearInterval(id);
           maybeSaveBestChain(prev.chain, prev.score);
           return { ...prev, phase: "gameover", timeLeft: 0 };
         }
         return { ...prev, timeLeft: prev.timeLeft - 1 };
       });
     }, 1000);
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+    return () => clearInterval(id);
   }, [state.phase]);
 
   function startGame() {
@@ -78,58 +110,70 @@ export default function Game() {
         ? { ...p, phase: "playing" }
         : { ...initGame(), phase: "playing" }
     );
-    setTimeout(() => inputRef.current?.focus(), 100);
   }
 
-  function submitWord() {
-    const word = state.input.trim().toLowerCase();
-    if (word.length < 3) {
-      setState((p) => ({ ...p, errorMsg: "La palabra debe tener al menos 3 letras." }));
-      return;
-    }
-    if (!wordStartsWithSyllable(word, state.challengeSyllable)) {
-      setState((p) => ({ ...p, errorMsg: `La palabra debe empezar con "${state.challengeSyllable.toUpperCase()}".` }));
-      return;
-    }
-    if (!isValidWord(word)) {
-      setState((p) => ({ ...p, errorMsg: "Esa palabra no existe en el diccionario." }));
-      return;
-    }
-    if (isMonosyllable(word)) {
-      setState((p) => ({ ...p, errorMsg: "No valen monosílabos." }));
-      return;
-    }
-    if (state.usedWords.has(normalize(word))) {
-      setState((p) => ({ ...p, errorMsg: "Esa palabra ya fue usada." }));
-      return;
-    }
+  const submitWord = useCallback(() => {
+    setState((p) => {
+      const word = p.input.trim().toLowerCase();
+      const err = (msg: string) => { playErrorSound(); return { ...p, errorMsg: msg }; };
 
-    const speedBonus = state.timeLeft >= 10 ? 5 : 0;
-    const lengthBonus = Math.max(0, word.length - 4);
-    const points = 10 + speedBonus + lengthBonus;
-    const newSyl = getChallengeSyllable(word);
-    const newUsed = new Set(state.usedWords);
-    newUsed.add(normalize(word));
+      if (word.length < 3) return err("La palabra debe tener al menos 3 letras.");
+      if (!wordStartsWithSyllable(word, p.challengeSyllable))
+        return err(`La palabra debe empezar con "${p.challengeSyllable.toUpperCase()}".`);
+      if (!isValidWord(word)) return err("Esa palabra no existe en el diccionario.");
+      if (isMonosyllable(word)) return err("No valen monosílabos.");
+      if (p.usedWords.has(normalize(word))) return err("Esa palabra ya fue usada.");
 
-    setState((p) => ({
-      ...p,
-      currentWord: word.toUpperCase(),
-      challengeSyllable: newSyl,
-      chain: [...p.chain, word.toUpperCase()],
-      usedWords: newUsed,
-      score: p.score + points,
-      timeLeft: TIMER_START,
-      errorMsg: "",
-      input: "",
-    }));
-    inputRef.current?.focus();
+      playSuccessSound();
+      const speedBonus = p.timeLeft >= 10 ? 5 : 0;
+      const lengthBonus = Math.max(0, word.length - 4);
+      const points = 10 + speedBonus + lengthBonus;
+      const newSyl = getChallengeSyllable(word);
+      const newUsed = new Set(p.usedWords);
+      newUsed.add(normalize(word));
+
+      return {
+        ...p,
+        currentWord: word.toUpperCase(),
+        challengeSyllable: newSyl,
+        chain: [...p.chain, word.toUpperCase()],
+        usedWords: newUsed,
+        score: p.score + points,
+        timeLeft: TIMER_START,
+        errorMsg: "",
+        input: "",
+      };
+    });
+  }, []);
+
+  // Physical keyboard support
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (state.phase !== "playing") return;
+      if (e.key === "Enter") { submitWord(); return; }
+      if (e.key === "Backspace") {
+        setState(p => ({ ...p, input: p.input.slice(0, -1), errorMsg: "" }));
+        return;
+      }
+      if (/^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]$/.test(e.key)) {
+        setState(p => ({ ...p, input: p.input + e.key.toLowerCase(), errorMsg: "" }));
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [state.phase, submitWord]);
+
+  function handleVirtualKey(key: string) {
+    if (state.phase !== "playing") return;
+    if (key === "⌫") {
+      setState(p => ({ ...p, input: p.input.slice(0, -1), errorMsg: "" }));
+    } else {
+      setState(p => ({ ...p, input: p.input + key.toLowerCase(), errorMsg: "" }));
+    }
   }
 
-  function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter") submitWord();
-  }
-
-  const timerColor = state.timeLeft <= 5 ? "#ef4444" : state.timeLeft <= 9 ? ACCENT : "#22c55e";
+  const timerColor = state.timeLeft <= 5 ? "#ef4444" : state.timeLeft <= 9 ? "#f97316" : "#22c55e";
+  const timerPct = (state.timeLeft / TIMER_START) * 100;
 
   // ── IDLE ──
   if (state.phase === "idle") {
@@ -149,7 +193,6 @@ export default function Game() {
               Tomá la última sílaba y enganchá la siguiente palabra
             </Typography>
           </Box>
-
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 20,
             py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
@@ -178,7 +221,6 @@ export default function Game() {
             </Typography>
           </Box>
 
-          {/* Cadena completa */}
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
               Tu cadena
@@ -191,7 +233,7 @@ export default function Game() {
                   border: `1px solid ${i === 0 ? "#d1d5db" : ACCENT}`,
                 }}>
                   <Typography sx={{ color: i === 0 ? "#6b7280" : ACCENT, fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
-                    {w}
+                    {w.toUpperCase()}
                   </Typography>
                 </Box>
               ))}
@@ -215,7 +257,7 @@ export default function Game() {
   // ── PLAYING ──
   return (
     <Layout onBack={() => navigate("/")}>
-      <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: { xs: "230px", md: 2 }, display: "flex", flexDirection: "column", gap: 2 }}>
 
         {/* Score + timer */}
         <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -227,16 +269,12 @@ export default function Game() {
             <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>Palabras</Typography>
             <Typography sx={{ color: "#374151", fontWeight: 900, fontSize: 28 }}>{state.chain.length - 1}</Typography>
           </Box>
-          <Box sx={{
-            width: 56, height: 56, borderRadius: "50%",
-            border: `3px solid ${timerColor}`,
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }}>
+          <Box sx={{ width: 56, height: 56, borderRadius: "50%", border: `3px solid ${timerColor}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Typography sx={{ color: timerColor, fontWeight: 900, fontSize: 22 }}>{state.timeLeft}</Typography>
           </Box>
         </Box>
 
-        {/* Palabra actual + sílaba requerida */}
+        {/* Palabra actual + sílaba */}
         <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2.5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
           <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
             Palabra actual
@@ -256,33 +294,37 @@ export default function Game() {
           </Box>
         </Box>
 
-        {/* Input */}
-        <TextField
-          inputRef={inputRef}
-          value={state.input}
-          onChange={(e) => setState((p) => ({ ...p, input: e.target.value, errorMsg: "" }))}
-          onKeyDown={handleKeyDown}
-          placeholder={`Empezá con ${state.challengeSyllable.toUpperCase()}...`}
-          autoComplete="off"
-          autoCapitalize="none"
-          sx={{
-            "& .MuiOutlinedInput-root": {
-              backgroundColor: "#fff", borderRadius: "10px",
-              fontSize: 22, fontWeight: 700, color: "#111",
-              "& fieldset": { borderColor: "#d1d5db", borderWidth: 2 },
-              "&:hover fieldset": { borderColor: ACCENT },
-              "&.Mui-focused fieldset": { borderColor: ACCENT },
-            },
-            "& input": { color: "#111", py: 1.8, textAlign: "center", letterSpacing: 1, textTransform: "uppercase" },
-            "& input::placeholder": { color: "#aaa", opacity: 1 },
-          }}
-        />
+        {/* Input display (no native keyboard) */}
+        <Box sx={{
+          backgroundColor: "#fff", borderRadius: "10px",
+          border: `2px solid ${state.input ? ACCENT : "#d1d5db"}`,
+          minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "border-color 0.2s",
+        }}>
+          <Typography sx={{
+            fontSize: 22, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
+            color: state.input ? "#111" : "#bbb",
+          }}>
+            {state.input || `Empezá con ${state.challengeSyllable.toUpperCase()}...`}
+          </Typography>
+        </Box>
 
         {/* Error */}
-        <Box sx={{ minHeight: 24, textAlign: "center" }}>
+        <Box sx={{ minHeight: 20, textAlign: "center", mt: -1 }}>
           {state.errorMsg && (
-            <Typography sx={{ color: "#ef4444", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
+            <Typography sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
           )}
+        </Box>
+
+        {/* Barra de tiempo */}
+        <Box sx={{ height: 8, backgroundColor: "rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden" }}>
+          <Box sx={{
+            height: "100%",
+            width: `${timerPct}%`,
+            backgroundColor: timerColor,
+            borderRadius: 4,
+            transition: "width 0.9s linear, background-color 0.3s",
+          }} />
         </Box>
 
         <Button onClick={submitWord} variant="contained" fullWidth sx={{
@@ -300,10 +342,7 @@ export default function Game() {
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {state.chain.slice(1).map((w, i) => (
-                <Box key={i} sx={{
-                  px: 1.5, py: 0.4, borderRadius: "6px",
-                  backgroundColor: `${ACCENT}18`, border: `1px solid ${ACCENT}55`,
-                }}>
+                <Box key={i} sx={{ px: 1.5, py: 0.4, borderRadius: "6px", backgroundColor: `${ACCENT}18`, border: `1px solid ${ACCENT}55` }}>
                   <Typography sx={{ color: ACCENT, fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
                     {w}
                   </Typography>
@@ -314,6 +353,8 @@ export default function Game() {
         )}
 
       </Box>
+
+      <VirtualKeyboard onKey={handleVirtualKey} />
     </Layout>
   );
 }

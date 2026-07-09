@@ -8,7 +8,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const ACCENT = "#f97316";
+const ACCENT = "#e74c3c";
 
 const RAIN_EMOJIS = [
   "🔗", "⛓️", "📝", "✏️", "💬", "🗣️", "📖", "🔤", "🔠", "🅰️",
@@ -57,26 +57,8 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
   }, []);
 
   return (
-    // Wrapper full-width: gradiente cubre todo el viewport
-    <Box sx={{ minHeight: "100vh", position: "relative", overflow: "hidden" }}>
-      {/* Lluvia de emojis — full width */}
-      <Box ref={canvasRef} sx={{
-        position: "fixed", top: 0, left: 0, width: "100%", height: "100%",
-        pointerEvents: "none", zIndex: 0,
-        "& .rain-emoji": {
-          position: "absolute", top: "-50px",
-          animation: "fall linear infinite",
-          userSelect: "none", pointerEvents: "none", opacity: 0.7,
-        },
-        "@keyframes fall": {
-          "0%": { transform: "translateY(-100px) rotate(0deg)", opacity: 0 },
-          "10%": { opacity: 0.7 },
-          "90%": { opacity: 0.7 },
-          "100%": { transform: "translateY(100vh) rotate(360deg)", opacity: 0 },
-        },
-      }} />
-
-      {/* Columna centrada */}
+    <>
+      {/* Columna centrada con gradiente y overflow hidden — lluvia queda adentro */}
       <Box sx={{
         width: { md: "480px", xs: "100%" },
         margin: "0 auto",
@@ -84,9 +66,28 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        zIndex: 5,
+        background: "linear-gradient(#a34747, #F44336)",
+        overflow: "hidden",
         pb: 2,
       }}>
+        {/* Canvas lluvia de emojis — absolute dentro de la columna */}
+        <Box ref={canvasRef} sx={{
+          position: "absolute", top: 0, left: 0,
+          width: "100%", height: "100%",
+          pointerEvents: "none", zIndex: 0,
+          "& .rain-emoji": {
+            position: "absolute", top: "-50px",
+            animation: "fall linear infinite",
+            userSelect: "none", pointerEvents: "none", opacity: 0.7,
+          },
+          "@keyframes fall": {
+            "0%": { transform: "translateY(-100px) rotate(0deg)", opacity: 0 },
+            "10%": { opacity: 0.7 },
+            "90%": { opacity: 0.7 },
+            "100%": { transform: "translateY(100vh) rotate(360deg)", opacity: 0 },
+          },
+        }} />
+
         {showHeader && (
           <Box component="header" sx={{
             display: "flex", alignItems: "center", justifyContent: "center",
@@ -127,7 +128,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
         <Container disableGutters sx={{
           flex: 1, display: "flex", flexDirection: "column",
           alignItems: "center", justifyContent: "flex-start",
-          mt: 2, px: 0,
+          mt: 2, px: 0, position: "relative", zIndex: 5,
         }}>
           {children}
         </Container>
@@ -155,7 +156,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
           </List>
         </Box>
       </Drawer>
-    </Box>
+    </>
   );
 };
 

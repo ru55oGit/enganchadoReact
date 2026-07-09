@@ -14,7 +14,17 @@ body {
   font-family: "Nunito", "Roboto", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(#a34747, #F44336);
+  background-image: linear-gradient(
+    135deg,
+    #7d6e6e 16.67%,
+    #fff 0,
+    #fff 50%,
+    #7d6e6e 0,
+    #7d6e6e 66.67%,
+    #fff 0,
+    #fff
+  );
+  background-size: 4.24px 4.24px;
   min-height: 100vh;
 }
 

@@ -1,8 +1,4 @@
-import Hypher from "hypher";
-import spanishHyphenation from "hyphenation.es";
 import rawWords from "an-array-of-spanish-words";
-
-const hypher = new Hypher(spanishHyphenation as Record<string, unknown>);
 
 export function normalize(word: string): string {
   return word
@@ -24,24 +20,86 @@ for (const w of wordSet) {
   wordIndex.get(key)!.push(w);
 }
 
+// ── Spanish syllabification ──────────────────────────────────────────────────
+
+const VOWELS = new Set("aeiouáéíóúü");
+const STRONG_VOWELS = new Set("aeoáéó");
+const WEAK_VOWELS = new Set("iuíúü");
+
+// Consonant clusters that form an inseparable onset (go together to the next syllable)
+const LIQUID_CLUSTERS = new Set([
+  "bl","br","cl","cr","dr","fl","fr","gl","gr","pl","pr","tr","vr",
+  "ch","ll","rr","gu","qu",
+]);
+
+function isVowel(c: string): boolean {
+  return VOWELS.has(c);
+}
+
+function isDiphthong(a: string, b: string): boolean {
+  if (STRONG_VOWELS.has(a) && STRONG_VOWELS.has(b)) return false; // hiatus
+  if (a === "í" || a === "ú" || b === "í" || b === "ú") return false; // accented weak = hiatus
+  return isVowel(a) && isVowel(b);
+}
+
+/**
+ * Returns the last syllable of a Spanish word using proper syllabification rules.
+ * Much more accurate than hypher for this purpose.
+ */
+export function getLastSyllable(word: string): string {
+  const w = normalize(word);
+
+  // Find the last vowel
+  let lastVowelIdx = -1;
+  for (let i = w.length - 1; i >= 0; i--) {
+    if (isVowel(w[i])) { lastVowelIdx = i; break; }
+  }
+  if (lastVowelIdx === -1) return w;
+
+  // Extend vowel nucleus backward to include diphthong
+  let nucleusStart = lastVowelIdx;
+  if (nucleusStart > 0 && isVowel(w[nucleusStart - 1]) && isDiphthong(w[nucleusStart - 1], w[nucleusStart])) {
+    nucleusStart--;
+  }
+
+  // Find onset: consonants immediately before the nucleus
+  let onsetStart = nucleusStart;
+  if (onsetStart > 0 && !isVowel(w[onsetStart - 1])) {
+    onsetStart--; // take one consonant
+    // Try to take a second consonant if it forms an inseparable cluster
+    if (onsetStart > 0 && !isVowel(w[onsetStart - 1])) {
+      const cluster = w[onsetStart - 1] + w[onsetStart];
+      if (LIQUID_CLUSTERS.has(cluster)) {
+        onsetStart--;
+      }
+    }
+  }
+
+  // Include everything from onset start to end of word (coda included)
+  return w.slice(onsetStart);
+}
+
 export function isValidWord(word: string): boolean {
   return wordSet.has(normalize(word));
 }
 
-export function getSyllables(word: string): string[] {
-  return hypher.hyphenate(normalize(word));
-}
-
+/** Count vowel nuclei to detect monosyllables (more reliable than hypher) */
 export function isMonosyllable(word: string): boolean {
-  return getSyllables(word).length <= 1;
+  const w = normalize(word);
+  let nuclei = 0;
+  let i = 0;
+  while (i < w.length) {
+    if (isVowel(w[i])) {
+      nuclei++;
+      // Skip diphthong
+      if (i + 1 < w.length && isVowel(w[i + 1]) && isDiphthong(w[i], w[i + 1])) i++;
+    }
+    i++;
+  }
+  return nuclei <= 1;
 }
 
-export function getLastSyllable(word: string): string {
-  const syls = getSyllables(word);
-  return syls[syls.length - 1];
-}
-
-// Returns the syllable the next word must START with (normalized, with fallback)
+// Returns the syllable the next word must START with (with fallback)
 export function getChallengeSyllable(word: string): string {
   const lastSyl = normalize(getLastSyllable(word));
 
@@ -85,4 +143,9 @@ const STARTING_WORDS = [
 
 export function getStartingWord(): string {
   return STARTING_WORDS[Math.floor(Math.random() * STARTING_WORDS.length)];
+}
+
+// getSyllables kept for compatibility but not used internally
+export function getSyllables(word: string): string[] {
+  return [getLastSyllable(word)];
 }

@@ -6,7 +6,7 @@ import Button from "@mui/material/Button";
 import Layout from "../components/Layout";
 import { getBestChain, BestChain } from "../utils/gameStore";
 
-const ACCENT = "#f97316";
+const ACCENT = "#e74c3c";
 const CARD_BG = "#eb6f62";
 const CHAIN = ["CASA", "SAPO", "POZO", "ZORRO", "ROPERO"];
 
@@ -144,20 +144,24 @@ export default function Home() {
           </Box>
         )}
 
+        {/* Qué es */}
+        <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
+          <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
+            ¿Qué es Enganchado?
+          </Typography>
+          <Typography sx={{ color: "rgba(255,255,255,0.85)", lineHeight: 1.7 }}>
+            Enganchado es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?
+          </Typography>
+        </Box>
+
         {/* Cómo jugar */}
-        <Box sx={{ borderRadius: "16px", backgroundColor: "#ededed", p: 2, color: "#222" }}>
-          <Typography sx={{ fontSize: 36, fontWeight: 800, mb: 2 }}>Cómo jugar</Typography>
-          {[
-            ["🔗", "Te damos una palabra. Tomá la última sílaba y arrancá la siguiente con ella."],
-            ["⏱️", "Tenés 15 segundos por turno. ¡No te quedes sin tiempo!"],
-            ["🚫", "No valen monosílabos ni palabras repetidas."],
-            ["⬆️", "Cuanto más larga la cadena y más rápido respondés, más puntos sumás."],
-          ].map(([emoji, text]) => (
-            <Box key={text as string} sx={{ display: "flex", alignItems: "flex-start", gap: 1.5, mb: 1.5 }}>
-              <Typography sx={{ fontSize: 20 }}>{emoji}</Typography>
-              <Typography sx={{ fontSize: 15, color: "#444", lineHeight: 1.5 }}>{text}</Typography>
-            </Box>
-          ))}
+        <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
+          <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
+            ¿Cómo jugar?
+          </Typography>
+          <Typography sx={{ color: "rgba(255,255,255,0.85)", lineHeight: 1.7 }}>
+            Te damos una palabra de inicio. Usá su última sílaba para arrancar la siguiente, y así sucesivamente. Tenés 15 segundos por turno. No valen monosílabos ni palabras repetidas. Cuanto más larga la cadena y más rápido respondés, más puntos sumás.
+          </Typography>
         </Box>
 
       </Box>
