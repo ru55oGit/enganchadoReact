@@ -17,11 +17,11 @@ const ROWS_EN = [
 
 interface Props {
   onKey: (key: string) => void;
-  lang?: "es" | "en";
+  lang?: "es" | "en" | "pt";
 }
 
 export default function VirtualKeyboard({ onKey, lang = "es" }: Props) {
-  const ROWS = lang === "en" ? ROWS_EN : ROWS_ES;
+  const ROWS = lang === "es" ? ROWS_ES : ROWS_EN;
   return (
     <Box sx={{
       display: { md: "none", xs: "block" },

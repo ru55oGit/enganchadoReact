@@ -9,10 +9,17 @@ import {
 import {
   normalize as normalizeEn,
   isValidWord as isValidWordEn,
-  getChallengeLetter,
+  getChallengeLetter as getChallengeLetterEn,
   getStartingWord as getStartingWordEn,
-  wordStartsWithLetter,
+  wordStartsWithLetter as wordStartsWithLetterEn,
 } from "./wordEngineEn";
+import {
+  normalize as normalizePt,
+  isValidWord as isValidWordPt,
+  getChallengeLetter as getChallengeLetterPt,
+  getStartingWord as getStartingWordPt,
+  wordStartsWithLetter as wordStartsWithLetterPt,
+} from "./wordEnginePt";
 import { SupportedLanguage } from "../i18n/translations";
 
 // Unifies the Spanish (syllable-chain) and English (letter-chain) engines
@@ -37,14 +44,29 @@ const esEngine: WordGameEngine = {
 
 const enEngine: WordGameEngine = {
   getStartingWord: getStartingWordEn,
-  getChallengeUnit: getChallengeLetter,
-  unitMatchesWord: wordStartsWithLetter,
+  getChallengeUnit: getChallengeLetterEn,
+  unitMatchesWord: wordStartsWithLetterEn,
   isValidWord: isValidWordEn,
   // English monosyllables (cat, dog, run...) are far too common to ban.
   isRejected: () => false,
   normalize: normalizeEn,
 };
 
+const ptEngine: WordGameEngine = {
+  getStartingWord: getStartingWordPt,
+  getChallengeUnit: getChallengeLetterPt,
+  unitMatchesWord: wordStartsWithLetterPt,
+  isValidWord: isValidWordPt,
+  isRejected: () => false,
+  normalize: normalizePt,
+};
+
+const engines: Record<SupportedLanguage, WordGameEngine> = {
+  es: esEngine,
+  en: enEngine,
+  pt: ptEngine,
+};
+
 export function getGameEngine(lang: SupportedLanguage): WordGameEngine {
-  return lang === "en" ? enEngine : esEngine;
+  return engines[lang];
 }

@@ -1,4 +1,4 @@
-export type SupportedLanguage = "es" | "en";
+export type SupportedLanguage = "es" | "en" | "pt";
 
 export interface Translation {
   // Layout
@@ -142,7 +142,53 @@ const en: Translation = {
   errorAlreadyUsed: "That word was already used.",
 };
 
-export const translations: Record<SupportedLanguage, Translation> = { es, en };
+const pt: Translation = {
+  appName: "Palavra Encadeada",
+  drawerHome: "Início",
+  drawerPlay: "Jogar",
+
+  tagline: "pense · encadeie · vença",
+  greetingMorning: "Bom dia ☀️",
+  greetingAfternoon: "Boa tarde 🌤️",
+  greetingEvening: "Boa noite 🌙",
+  readyToPlay: "Pronto para jogar Palavra Encadeada?",
+  exampleChainLabel: "Exemplo de cadeia",
+  exampleChain: ["CASA", "ÁRVORE", "ESCOLA", "AMOR", "RIO"],
+  exampleExplanation: "A última letra de AMOR é R → sua palavra começa com R",
+  playButton: "JOGAR!",
+  freeModeLabel: "MODO LIVRE",
+  freeModeSub: "Veja até onde você chega!",
+  bestStreakTitle: "Melhor Sequência",
+  wordsLabel: "palavras",
+  pointsLabel: "pontos",
+  dateLocale: "pt-BR",
+  whatIsTitle: "O que é Palavra Encadeada?",
+  whatIsBody: "Palavra Encadeada é um jogo de palavras em cadeia. Pegue a última letra da palavra anterior e comece uma nova com ela. Até onde você consegue chegar antes que o tempo acabe?",
+  howToPlayTitle: "Como jogar?",
+  howToPlayBody: "Damos uma palavra inicial. Use a última letra dela para começar a próxima, e assim por diante. Você tem 15 segundos por rodada. Sem palavras repetidas. Quanto mais longa a cadeia e mais rápido você responder, mais pontos você ganha.",
+
+  startingWordLabel: "Palavra inicial",
+  idleInstruction: "Pegue a última letra e encadeie a próxima palavra",
+  startButton: "Começar!",
+  gameOverTitle: "Tempo esgotado!",
+  scoreLabel: "Pontuação",
+  chainOfWords: (n) => `Cadeia de ${n} palavra${n === 1 ? "" : "s"}`,
+  yourChainLabel: "Sua cadeia",
+  playAgainButton: "Jogar de novo",
+  backToHomeButton: "Voltar ao início",
+  currentWordLabel: "Palavra atual",
+  mustStartWithLabel: "Sua palavra deve começar com",
+  inputPlaceholder: (unit) => `Comece com ${unit}...`,
+  chainCount: (n) => `Cadeia (${n})`,
+
+  errorTooShort: "A palavra deve ter pelo menos 3 letras.",
+  errorWrongStart: (unit) => `A palavra deve começar com "${unit}".`,
+  errorNotInDictionary: "Essa palavra não existe no dicionário.",
+  errorMonosyllable: "Palavras monossílabas não valem.",
+  errorAlreadyUsed: "Essa palavra já foi usada.",
+};
+
+export const translations: Record<SupportedLanguage, Translation> = { es, en, pt };
 
 export const availableLanguages: Array<{
   code: SupportedLanguage;
@@ -151,4 +197,5 @@ export const availableLanguages: Array<{
 }> = [
   { code: "es", name: "Español", flag: "🇦🇷" },
   { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "pt", name: "Português", flag: "🇧🇷" },
 ];
