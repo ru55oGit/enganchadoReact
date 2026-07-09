@@ -1,49 +1,21 @@
-:root {
-  --bg: #0b1220;
-  --card: #071029;
-  --accent: #7dd3fc;
-  --text: #e6eef8;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-html,
-body {
+html, body {
   height: 100%;
+  margin: 0;
+  overflow-x: hidden;
 }
 
 body {
-  font-family:
-    "Averta",
-    "AvertaBold",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    "Roboto",
-    "Helvetica Neue",
-    Arial,
-    sans-serif;
+  font-family: "Nunito", "Roboto", "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-image: linear-gradient(
-    135deg,
-    #7d6e6e 16.67%,
-    #fff 0,
-    #fff 50%,
-    #7d6e6e 0,
-    #7d6e6e 66.67%,
-    #fff 0,
-    #fff
-  );
-  background-size: 4.24px 4.24px;
-  color: var(--text);
-  margin: 0;
+  background: linear-gradient(#a34747, #F44336);
   min-height: 100vh;
-  overflow-x: hidden;
 }
 
 #root {

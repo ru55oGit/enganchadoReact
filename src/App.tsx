@@ -5,9 +5,7 @@ import Game from "./pages/game";
 
 const theme = createTheme({
   palette: {
-    mode: "dark",
     primary: { main: "#f97316" },
-    background: { default: "#0f0c29" },
   },
   typography: {
     fontFamily: "'Nunito', 'Roboto', sans-serif",

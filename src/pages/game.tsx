@@ -13,6 +13,7 @@ import {
   getStartingWord,
   wordStartsWithSyllable,
 } from "../utils/wordEngine";
+import { maybeSaveBestChain } from "../utils/gameStore";
 
 const ACCENT = "#f97316";
 const TIMER_START = 15;
@@ -53,7 +54,6 @@ export default function Game() {
   const inputRef = useRef<HTMLInputElement>(null);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
-  // Timer
   useEffect(() => {
     if (state.phase !== "playing") {
       if (timerRef.current) clearInterval(timerRef.current);
@@ -63,6 +63,7 @@ export default function Game() {
       setState((prev) => {
         if (prev.timeLeft <= 1) {
           if (timerRef.current) clearInterval(timerRef.current);
+          maybeSaveBestChain(prev.chain, prev.score);
           return { ...prev, phase: "gameover", timeLeft: 0 };
         }
         return { ...prev, timeLeft: prev.timeLeft - 1 };
@@ -72,14 +73,16 @@ export default function Game() {
   }, [state.phase]);
 
   function startGame() {
-    const s = initGame();
-    setState({ ...s, phase: "playing" });
+    setState((p) =>
+      p.phase === "idle"
+        ? { ...p, phase: "playing" }
+        : { ...initGame(), phase: "playing" }
+    );
     setTimeout(() => inputRef.current?.focus(), 100);
   }
 
   function submitWord() {
     const word = state.input.trim().toLowerCase();
-
     if (word.length < 3) {
       setState((p) => ({ ...p, errorMsg: "La palabra debe tener al menos 3 letras." }));
       return;
@@ -101,7 +104,6 @@ export default function Game() {
       return;
     }
 
-    // Valid word
     const speedBonus = state.timeLeft >= 10 ? 5 : 0;
     const lengthBonus = Math.max(0, word.length - 4);
     const points = 10 + speedBonus + lengthBonus;
@@ -127,28 +129,31 @@ export default function Game() {
     if (e.key === "Enter") submitWord();
   }
 
-  const timerColor = state.timeLeft <= 5 ? "#ef4444" : state.timeLeft <= 9 ? "#f97316" : "#22c55e";
+  const timerColor = state.timeLeft <= 5 ? "#ef4444" : state.timeLeft <= 9 ? ACCENT : "#22c55e";
 
   // ── IDLE ──
   if (state.phase === "idle") {
     return (
-      <Layout>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, pt: 4 }}>
-          <Box onClick={() => navigate("/")} sx={{ alignSelf: "flex-start", color: "#818cf8", cursor: "pointer", fontSize: 28, mb: 2 }}>‹</Box>
-          <Typography sx={{ fontSize: 48, mb: 2 }}>🔗</Typography>
-          <Typography sx={{ fontFamily: "'Lobster', cursive", fontSize: 36, color: "#fff", mb: 1 }}>Enganchado</Typography>
-          <Typography sx={{ color: "#94a3b8", fontSize: 14, mb: 4 }}>Empezás con la palabra:</Typography>
-          <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}22`, border: `2px solid ${ACCENT}`, mb: 6 }}>
-            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 32, fontFamily: "monospace", letterSpacing: 2 }}>
-              {state.currentWord.toUpperCase()}
+      <Layout onBack={() => navigate("/")}>
+        <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <Typography sx={{ fontSize: 13, color: "#888", fontWeight: 700, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Palabra inicial
+            </Typography>
+            <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
+              <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 36, fontFamily: "monospace", letterSpacing: 3 }}>
+                {state.currentWord.toUpperCase()}
+              </Typography>
+            </Box>
+            <Typography sx={{ fontSize: 14, color: "#666", textAlign: "center" }}>
+              Tomá la última sílaba y enganchá la siguiente palabra
             </Typography>
           </Box>
-          <Button
-            onClick={startGame}
-            variant="contained"
-            size="large"
-            sx={{ backgroundColor: ACCENT, color: "#fff", fontWeight: 800, fontSize: 20, px: 6, py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#ea6c0a" } }}
-          >
+
+          <Button onClick={startGame} variant="contained" size="large" sx={{
+            backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 20,
+            py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
+          }}>
             ¡Empezar!
           </Button>
         </Box>
@@ -159,32 +164,47 @@ export default function Game() {
   // ── GAME OVER ──
   if (state.phase === "gameover") {
     return (
-      <Layout>
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", flex: 1, pt: 6 }}>
-          <Typography sx={{ fontSize: 64, mb: 2 }}>⏰</Typography>
-          <Typography sx={{ fontFamily: "'Lobster', cursive", fontSize: 36, color: "#fff", mb: 1 }}>¡Se acabó el tiempo!</Typography>
-          <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}22`, border: `2px solid ${ACCENT}`, mb: 2, textAlign: "center" }}>
-            <Typography sx={{ color: "#94a3b8", fontSize: 13, mb: 0.5 }}>Puntaje</Typography>
-            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 48 }}>{state.score}</Typography>
+      <Layout onBack={() => navigate("/")}>
+        <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 3, display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+            <Typography sx={{ fontSize: 52 }}>⏰</Typography>
+            <Typography sx={{ fontFamily: "Lobster, cursive", fontSize: 28, color: "#222" }}>¡Se acabó el tiempo!</Typography>
+            <Box sx={{ px: 4, py: 2, borderRadius: "12px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}`, textAlign: "center", mt: 1 }}>
+              <Typography sx={{ color: "#888", fontSize: 13, mb: 0.5 }}>Puntaje</Typography>
+              <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 52 }}>{state.score}</Typography>
+            </Box>
+            <Typography sx={{ color: "#888", fontSize: 13 }}>
+              Cadena de {state.chain.length - 1} palabras
+            </Typography>
           </Box>
-          <Typography sx={{ color: "#64748b", fontSize: 13, mb: 1 }}>Cadena de {state.chain.length - 1} palabras</Typography>
 
-          {/* Cadena */}
-          <Box sx={{ width: "100%", p: 2, borderRadius: "10px", backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", mb: 4, maxHeight: 200, overflowY: "auto" }}>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
+          {/* Cadena completa */}
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              Tu cadena
+            </Typography>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {state.chain.map((w, i) => (
-                <Typography key={i} sx={{ color: i === 0 ? "#64748b" : "#e2e8f0", fontFamily: "monospace", fontSize: 13, backgroundColor: "rgba(255,255,255,0.07)", px: 1, py: 0.25, borderRadius: "4px" }}>
-                  {w}
-                </Typography>
+                <Box key={i} sx={{
+                  px: 1.5, py: 0.5, borderRadius: "6px",
+                  backgroundColor: i === 0 ? "#e5e7eb" : `${ACCENT}18`,
+                  border: `1px solid ${i === 0 ? "#d1d5db" : ACCENT}`,
+                }}>
+                  <Typography sx={{ color: i === 0 ? "#6b7280" : ACCENT, fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
+                    {w}
+                  </Typography>
+                </Box>
               ))}
             </Box>
           </Box>
 
-          <Button onClick={startGame} variant="contained" size="large"
-            sx={{ backgroundColor: ACCENT, color: "#fff", fontWeight: 800, fontSize: 18, px: 5, py: 1.6, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#ea6c0a" }, mb: 2 }}>
+          <Button onClick={startGame} variant="contained" size="large" sx={{
+            backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,
+            py: 1.6, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
+          }}>
             Jugar de nuevo
           </Button>
-          <Button onClick={() => navigate("/")} sx={{ color: "#818cf8", fontSize: 14 }}>
+          <Button onClick={() => navigate("/")} sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>
             Volver al inicio
           </Button>
         </Box>
@@ -194,44 +214,43 @@ export default function Game() {
 
   // ── PLAYING ──
   return (
-    <Layout>
-      <Box sx={{ display: "flex", flexDirection: "column", flex: 1 }}>
+    <Layout onBack={() => navigate("/")}>
+      <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 
-        {/* Header */}
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 3 }}>
-          <Box onClick={() => navigate("/")} sx={{ color: "#818cf8", cursor: "pointer", fontSize: 28 }}>‹</Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Box sx={{ textAlign: "center" }}>
-              <Typography sx={{ color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 }}>Puntaje</Typography>
-              <Typography sx={{ color: ACCENT, fontWeight: 800, fontSize: 20 }}>{state.score}</Typography>
-            </Box>
-            <Box sx={{ width: 1, height: 32, backgroundColor: "rgba(255,255,255,0.1)" }} />
-            <Box sx={{ textAlign: "center" }}>
-              <Typography sx={{ color: "#64748b", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5 }}>Palabras</Typography>
-              <Typography sx={{ color: "#c7d2fe", fontWeight: 800, fontSize: 20 }}>{state.chain.length - 1}</Typography>
-            </Box>
+        {/* Score + timer */}
+        <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>Puntaje</Typography>
+            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 28 }}>{state.score}</Typography>
           </Box>
-          {/* Timer */}
-          <Box sx={{ width: 44, height: 44, borderRadius: "50%", border: `2px solid ${timerColor}`, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <Typography sx={{ color: timerColor, fontWeight: 800, fontSize: 18 }}>{state.timeLeft}</Typography>
+          <Box sx={{ textAlign: "center" }}>
+            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, fontWeight: 700 }}>Palabras</Typography>
+            <Typography sx={{ color: "#374151", fontWeight: 900, fontSize: 28 }}>{state.chain.length - 1}</Typography>
+          </Box>
+          <Box sx={{
+            width: 56, height: 56, borderRadius: "50%",
+            border: `3px solid ${timerColor}`,
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <Typography sx={{ color: timerColor, fontWeight: 900, fontSize: 22 }}>{state.timeLeft}</Typography>
           </Box>
         </Box>
 
-        {/* Palabra actual */}
-        <Box sx={{ textAlign: "center", mb: 2 }}>
-          <Typography sx={{ color: "#64748b", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, mb: 1 }}>Palabra actual</Typography>
-          <Box sx={{ px: 3, py: 2, borderRadius: "12px", backgroundColor: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.15)", display: "inline-block" }}>
-            <Typography sx={{ color: "#fff", fontWeight: 900, fontSize: 28, fontFamily: "monospace", letterSpacing: 2 }}>
-              {state.currentWord}
+        {/* Palabra actual + sílaba requerida */}
+        <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2.5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
+          <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
+            Palabra actual
+          </Typography>
+          <Box sx={{ px: 3, py: 1.5, borderRadius: "10px", backgroundColor: "#e5e7eb", border: "1px solid #d1d5db" }}>
+            <Typography sx={{ color: "#111", fontWeight: 900, fontSize: 30, fontFamily: "monospace", letterSpacing: 2 }}>
+              {state.currentWord.toUpperCase()}
             </Typography>
           </Box>
-        </Box>
-
-        {/* Sílaba requerida */}
-        <Box sx={{ textAlign: "center", mb: 3 }}>
-          <Typography sx={{ color: "#64748b", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, mb: 0.5 }}>Tu palabra debe empezar con</Typography>
-          <Box sx={{ display: "inline-block", px: 3, py: 1, borderRadius: "8px", backgroundColor: `${ACCENT}22`, border: `2px solid ${ACCENT}` }}>
-            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 28, fontFamily: "monospace", letterSpacing: 3 }}>
+          <Typography sx={{ color: "#888", fontSize: 12, textTransform: "uppercase", letterSpacing: 1, fontWeight: 700 }}>
+            Tu palabra debe empezar con
+          </Typography>
+          <Box sx={{ px: 3, py: 1, borderRadius: "8px", backgroundColor: `${ACCENT}18`, border: `2px solid ${ACCENT}` }}>
+            <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 30, fontFamily: "monospace", letterSpacing: 3 }}>
               {state.challengeSyllable.toUpperCase()}
             </Typography>
           </Box>
@@ -243,54 +262,57 @@ export default function Game() {
           value={state.input}
           onChange={(e) => setState((p) => ({ ...p, input: e.target.value, errorMsg: "" }))}
           onKeyDown={handleKeyDown}
-          placeholder={`Escribí una palabra con ${state.challengeSyllable.toUpperCase()}...`}
+          placeholder={`Empezá con ${state.challengeSyllable.toUpperCase()}...`}
           autoComplete="off"
           autoCapitalize="none"
           sx={{
-            mb: 1,
             "& .MuiOutlinedInput-root": {
-              backgroundColor: "rgba(255,255,255,0.08)", borderRadius: "10px",
-              fontSize: 20, fontWeight: 700, color: "#fff",
-              "& fieldset": { borderColor: "rgba(255,255,255,0.2)" },
+              backgroundColor: "#fff", borderRadius: "10px",
+              fontSize: 22, fontWeight: 700, color: "#111",
+              "& fieldset": { borderColor: "#d1d5db", borderWidth: 2 },
               "&:hover fieldset": { borderColor: ACCENT },
               "&.Mui-focused fieldset": { borderColor: ACCENT },
             },
-            "& input": { color: "#fff", py: 1.8, textAlign: "center", letterSpacing: 1 },
-            "& input::placeholder": { color: "rgba(255,255,255,0.25)", opacity: 1 },
+            "& input": { color: "#111", py: 1.8, textAlign: "center", letterSpacing: 1, textTransform: "uppercase" },
+            "& input::placeholder": { color: "#aaa", opacity: 1 },
           }}
         />
 
         {/* Error */}
-        <Box sx={{ minHeight: 24, textAlign: "center", mb: 2 }}>
+        <Box sx={{ minHeight: 24, textAlign: "center" }}>
           {state.errorMsg && (
-            <Typography sx={{ color: "#ef4444", fontSize: 13 }}>{state.errorMsg}</Typography>
+            <Typography sx={{ color: "#ef4444", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
           )}
         </Box>
 
-        <Button
-          onClick={submitWord}
-          variant="contained"
-          fullWidth
-          sx={{ backgroundColor: ACCENT, color: "#fff", fontWeight: 800, fontSize: 18, py: 1.6, borderRadius: "10px", textTransform: "none", "&:hover": { backgroundColor: "#ea6c0a" }, mb: 3 }}
-        >
+        <Button onClick={submitWord} variant="contained" fullWidth sx={{
+          backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,
+          py: 1.6, borderRadius: "10px", textTransform: "none", "&:hover": { backgroundColor: "#fff" },
+        }}>
           Confirmar →
         </Button>
 
         {/* Cadena */}
         {state.chain.length > 1 && (
-          <Box sx={{ flex: 1, overflowY: "auto" }}>
-            <Typography sx={{ color: "#475569", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, mb: 1 }}>
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
+            <Typography sx={{ color: "#888", fontSize: 11, textTransform: "uppercase", letterSpacing: 0.5, mb: 1, fontWeight: 700 }}>
               Cadena ({state.chain.length - 1})
             </Typography>
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
               {state.chain.slice(1).map((w, i) => (
-                <Typography key={i} sx={{ color: "#94a3b8", fontFamily: "monospace", fontSize: 12, backgroundColor: "rgba(255,255,255,0.06)", px: 1, py: 0.25, borderRadius: "4px", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  {w}
-                </Typography>
+                <Box key={i} sx={{
+                  px: 1.5, py: 0.4, borderRadius: "6px",
+                  backgroundColor: `${ACCENT}18`, border: `1px solid ${ACCENT}55`,
+                }}>
+                  <Typography sx={{ color: ACCENT, fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
+                    {w}
+                  </Typography>
+                </Box>
               ))}
             </Box>
           </Box>
         )}
+
       </Box>
     </Layout>
   );

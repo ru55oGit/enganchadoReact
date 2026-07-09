@@ -57,7 +57,9 @@ export function getChallengeSyllable(word: string): string {
 }
 
 function hasWordsFor(prefix: string): boolean {
-  return (wordIndex.get(prefix)?.length ?? 0) > 0;
+  const key = prefix.slice(0, 2);
+  const words = wordIndex.get(key) ?? [];
+  return words.some((w) => w.startsWith(prefix));
 }
 
 export function wordStartsWithSyllable(word: string, syllable: string): boolean {
@@ -66,9 +68,10 @@ export function wordStartsWithSyllable(word: string, syllable: string): boolean 
 
 export function getCpuWord(syllable: string, usedWords: Set<string>): string | null {
   const normSyl = normalize(syllable);
-  const candidates = wordIndex.get(normSyl) ?? [];
+  const key = normSyl.slice(0, 2);
+  const candidates = wordIndex.get(key) ?? [];
   const available = candidates.filter(
-    (w) => !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
+    (w) => w.startsWith(normSyl) && !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
   );
   if (available.length === 0) return null;
   return available[Math.floor(Math.random() * available.length)];
