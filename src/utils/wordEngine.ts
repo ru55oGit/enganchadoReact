@@ -42,6 +42,62 @@ function isDiphthong(a: string, b: string): boolean {
   return isVowel(a) && isVowel(b);
 }
 
+// "an-array-of-spanish-words" (our dictionary) stores every word WITHOUT
+// accents, so the written tilde that normally marks a hiato (e.g. biología,
+// país, tenía) is already gone by the time it reaches us — "ia"/"io"/"ua"
+// look identical whether they're a real diphthong (farmacia) or a lost-tilde
+// hiato (biología). These are known-safe exceptions where the ending is
+// unambiguously a hiato even unaccented, patched in by hand since the
+// dictionary can't tell us anymore.
+const HIATUS_SUFFIXES = [
+  "logia", "logias", // biología, psicología, tecnología...
+  "grafia", "grafias", // geografía, fotografía, biografía...
+  "sofia", "sofias", // filosofía...
+  "nomia", "nomias", // economía, astronomía, autonomía...
+  "tomia", "tomias", // anatomía, dicotomía...
+  "metria", "metrias", // geometría, simetría...
+];
+
+// Stored as the prefix ending right at the hiatus vowel (nucleus), NOT the
+// whole word — trailing consonants (país, raíz, baúl, maíz) haven't been
+// attached as coda yet at the point this check runs, and plurals/other
+// suffixed forms already truncate to the same prefix on their own, so they
+// don't need separate entries (e.g. "categorias" naturally checks against
+// "categoria").
+const HIATUS_WORDS = new Set([
+  "dia",
+  "tio", "tia",
+  "rio",
+  "frio", "fria",
+  "pai", // país, países (only affects the singular; "países" hiatus falls mid-word already)
+  "rai", // raíz
+  "bau", // baúl
+  "mai", // maíz
+  "policia",
+  "alegria",
+  "energia",
+  "poesia",
+  "todavia",
+  "categoria",
+  "teoria",
+  "mayoria",
+  "sabiduria",
+  "cortesia",
+  "valentia",
+  "melancolia",
+  "bahia",
+]);
+
+// `word` is the exact string being syllabified at this point and `boundary`
+// is the index of the second vowel in the pair under evaluation, so
+// word.slice(0, boundary + 1) is precisely the prefix ending right at the
+// juncture we're deciding on.
+function hasKnownHiatus(word: string, boundary: number): boolean {
+  const prefix = word.slice(0, boundary + 1);
+  if (HIATUS_WORDS.has(prefix)) return true;
+  return HIATUS_SUFFIXES.some((suf) => prefix.endsWith(suf));
+}
+
 /**
  * Returns the last syllable of a Spanish word using proper syllabification rules.
  * Much more accurate than hypher for this purpose.
@@ -58,7 +114,12 @@ export function getLastSyllable(word: string): string {
 
   // Extend vowel nucleus backward to include diphthong
   let nucleusStart = lastVowelIdx;
-  if (nucleusStart > 0 && isVowel(w[nucleusStart - 1]) && isDiphthong(w[nucleusStart - 1], w[nucleusStart])) {
+  if (
+    nucleusStart > 0 &&
+    isVowel(w[nucleusStart - 1]) &&
+    isDiphthong(w[nucleusStart - 1], w[nucleusStart]) &&
+    !hasKnownHiatus(w, nucleusStart)
+  ) {
     nucleusStart--;
   }
 
