@@ -60,8 +60,9 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
     <>
       {/* Columna centrada con gradiente y overflow hidden — lluvia queda adentro */}
       <Box sx={{
-        width: { md: "480px", xs: "100%" },
-        margin: "0 auto",
+        width: { xs: "100vw", md: "480px" },
+        marginLeft: { xs: "calc(50% - 50vw)", md: "auto" },
+        marginRight: { xs: "calc(50% - 50vw)", md: "auto" },
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
