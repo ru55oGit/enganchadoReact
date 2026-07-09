@@ -187,7 +187,19 @@ export function getChallengeSyllable(word: string): string {
 
   if (hasWordsFor(lastSyl)) return lastSyl;
 
-  // Strip leading characters one by one until we find a valid prefix
+  // Sin continuaciones para la sílaba completa (ej. "dormitorio" -> "rio",
+  // pero nada empieza con el diptongo "rio" salvo derivados de "río", que
+  // ahora cuentan como hiato). Preferimos recortar por atrás primero
+  // (RIO -> RI, nos quedamos con el ataque + núcleo) antes que por
+  // adelante (RIO -> IO, perdemos la "R"): recortar por atrás mantiene el
+  // sonido inicial real de la sílaba, así que se siente más parecido a
+  // "seguir la palabra anterior" en vez de saltar a un arranque distinto.
+  for (let len = lastSyl.length - 1; len >= 2; len--) {
+    const trimmed = lastSyl.slice(0, len);
+    if (hasWordsFor(trimmed)) return trimmed;
+  }
+
+  // Si tampoco hay nada, recortar por adelante como antes.
   for (let i = 1; i < lastSyl.length - 1; i++) {
     const trimmed = lastSyl.slice(i);
     if (trimmed.length >= 2 && hasWordsFor(trimmed)) return trimmed;
