@@ -194,7 +194,13 @@ export function isMonosyllable(word: string): boolean {
 // exacta, es una consecuencia de la palabra que se jugó, no algo que el
 // juego deba disimular.
 export function getChallengeSyllable(word: string): string {
-  return normalize(getLastSyllable(word));
+  const lastSyl = normalize(getLastSyllable(word));
+  // "rr" nunca puede arrancar una palabra en español (una sola r inicial
+  // ya tiene el sonido fuerte/vibrante), así que ninguna palabra real
+  // podría continuar una sílaba tipo "rro"/"rra". Para el desafío usamos
+  // la "r" simple en su lugar, que sí puede empezar cualquier palabra.
+  if (lastSyl.startsWith("rr")) return lastSyl.slice(1);
+  return lastSyl;
 }
 
 export function wordStartsWithSyllable(word: string, syllable: string): boolean {
@@ -212,14 +218,15 @@ export function getCpuWord(syllable: string, usedWords: Set<string>): string | n
   return available[Math.floor(Math.random() * available.length)];
 }
 
-// "perro" (rro), "tierra" (rra), "patio" (tio, hiato heredado de "tío") y
-// "ciudad" (dad: la única palabra del diccionario con esa sílaba inicial
-// es "dad", que es monosílabo y el juego ya los rechaza) terminan en
-// sílabas que ninguna palabra puede continuar — dejarían al jugador
-// trabado en el primer movimiento sin haber elegido nada, así que se
-// sacaron de la lista.
+// "patio" (tio, hiato heredado de "tío") y "ciudad" (dad: la única
+// palabra del diccionario con esa sílaba inicial es "dad", que es
+// monosílabo y el juego ya los rechaza) terminan en sílabas que ninguna
+// palabra puede continuar — dejarían al jugador trabado en el primer
+// movimiento sin haber elegido nada, así que se sacaron de la lista.
+// "perro"/"tierra" (rro/rra) ya no tienen ese problema: getChallengeSyllable
+// las normaliza a "ro"/"ra" porque "rr" nunca puede arrancar una palabra.
 const STARTING_WORDS = [
-  "casa", "zapato", "mesa", "camino", "tiempo", "fuerza",
+  "casa", "perro", "zapato", "mesa", "camino", "tierra", "tiempo", "fuerza",
   "barco", "cielo", "piedra", "bosque", "campo", "puerta", "fuego",
   "monte", "libro", "techo", "roca", "noche", "tarde", "mañana",
 ];

@@ -91,14 +91,14 @@ export default function Game() {
         if (prev.phase !== "playing") return prev;
         if (prev.timeLeft <= 1) {
           clearInterval(id);
-          maybeSaveBestChain(prev.chain, prev.score);
+          maybeSaveBestChain(currentLanguage, prev.chain, prev.score);
           return { ...prev, phase: "gameover", timeLeft: 0 };
         }
         return { ...prev, timeLeft: prev.timeLeft - 1 };
       });
     }, 1000);
     return () => clearInterval(id);
-  }, [state.phase]);
+  }, [state.phase, currentLanguage]);
 
   function startGame() {
     setState((p) =>

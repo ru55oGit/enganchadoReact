@@ -13,19 +13,19 @@ const CARD_BG = "#eb6f62";
 
 export default function Home() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const [bestChain, setBestChain] = useState<BestChain | null>(null);
   const CHAIN = t.exampleChain;
 
   useEffect(() => {
-    setBestChain(getBestChain());
-  }, []);
+    setBestChain(getBestChain(currentLanguage));
+  }, [currentLanguage]);
 
   useEffect(() => {
-    const refresh = () => setBestChain(getBestChain());
+    const refresh = () => setBestChain(getBestChain(currentLanguage));
     window.addEventListener("focus", refresh);
     return () => window.removeEventListener("focus", refresh);
-  }, []);
+  }, [currentLanguage]);
 
   const nowHour = new Date().getHours();
   const greeting =
