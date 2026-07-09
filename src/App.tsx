@@ -1,18 +1,30 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import WelcomeScreen from "./pages/Home";
-import Levels from "./pages/levels";
+import { createTheme, ThemeProvider, CssBaseline } from "@mui/material";
+import Home from "./pages/Home";
 import Game from "./pages/game";
 
-function App() {
+const theme = createTheme({
+  palette: {
+    mode: "dark",
+    primary: { main: "#f97316" },
+    background: { default: "#0f0c29" },
+  },
+  typography: {
+    fontFamily: "'Nunito', 'Roboto', sans-serif",
+  },
+  shape: { borderRadius: 8 },
+});
+
+export default function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<WelcomeScreen />} />
-        <Route path="/levels" element={<Levels />} />
-        <Route path="/game" element={<Game />} />
-      </Routes>
-    </Router>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<Game />} />
+        </Routes>
+      </Router>
+    </ThemeProvider>
   );
 }
-
-export default App;
