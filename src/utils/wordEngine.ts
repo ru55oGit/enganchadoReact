@@ -204,13 +204,15 @@ export function getCpuWord(syllable: string, usedWords: Set<string>): string | n
   return available[Math.floor(Math.random() * available.length)];
 }
 
-// "perro" (rro), "tierra" (rra) y "patio" (tio, hiato heredado de "tío")
-// terminan en sílabas que ninguna palabra puede continuar — dejarían al
-// jugador trabado en el primer movimiento sin haber elegido nada, así que
-// se sacaron de la lista.
+// "perro" (rro), "tierra" (rra), "patio" (tio, hiato heredado de "tío") y
+// "ciudad" (dad: la única palabra del diccionario con esa sílaba inicial
+// es "dad", que es monosílabo y el juego ya los rechaza) terminan en
+// sílabas que ninguna palabra puede continuar — dejarían al jugador
+// trabado en el primer movimiento sin haber elegido nada, así que se
+// sacaron de la lista.
 const STARTING_WORDS = [
   "casa", "zapato", "mesa", "camino", "tiempo", "fuerza",
-  "barco", "cielo", "piedra", "bosque", "ciudad", "campo", "puerta", "fuego",
+  "barco", "cielo", "piedra", "bosque", "campo", "puerta", "fuego",
   "monte", "libro", "techo", "roca", "noche", "tarde", "mañana",
 ];
 
