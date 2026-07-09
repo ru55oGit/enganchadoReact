@@ -79,6 +79,27 @@ export function getLastSyllable(word: string): string {
   return w.slice(onsetStart);
 }
 
+/**
+ * Returns the first syllable of a Spanish word, computed by peeling
+ * syllables off the end (via getLastSyllable) until nothing is left.
+ * Needed because a word can literally start with a syllable's letters
+ * without that being its real first syllable (e.g. "tonelada" is
+ * "to-ne-la-da": it starts with the letters "ton", but its first
+ * syllable is "to", not "ton").
+ */
+export function getFirstSyllable(word: string): string {
+  const w = normalize(word);
+  let remainder = w;
+  let first = w;
+  while (remainder.length > 0) {
+    const syl = getLastSyllable(remainder);
+    if (!syl || syl.length > remainder.length) break;
+    first = syl;
+    remainder = remainder.slice(0, remainder.length - syl.length);
+  }
+  return first;
+}
+
 export function isValidWord(word: string): boolean {
   return wordSet.has(normalize(word));
 }
@@ -117,11 +138,11 @@ export function getChallengeSyllable(word: string): string {
 function hasWordsFor(prefix: string): boolean {
   const key = prefix.slice(0, 2);
   const words = wordIndex.get(key) ?? [];
-  return words.some((w) => w.startsWith(prefix));
+  return words.some((w) => getFirstSyllable(w) === prefix);
 }
 
 export function wordStartsWithSyllable(word: string, syllable: string): boolean {
-  return normalize(word).startsWith(normalize(syllable));
+  return getFirstSyllable(word) === normalize(syllable);
 }
 
 export function getCpuWord(syllable: string, usedWords: Set<string>): string | null {
@@ -129,7 +150,7 @@ export function getCpuWord(syllable: string, usedWords: Set<string>): string | n
   const key = normSyl.slice(0, 2);
   const candidates = wordIndex.get(key) ?? [];
   const available = candidates.filter(
-    (w) => w.startsWith(normSyl) && !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
+    (w) => getFirstSyllable(w) === normSyl && !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
   );
   if (available.length === 0) return null;
   return available[Math.floor(Math.random() * available.length)];
@@ -138,7 +159,7 @@ export function getCpuWord(syllable: string, usedWords: Set<string>): string | n
 const STARTING_WORDS = [
   "casa", "perro", "zapato", "mesa", "camino", "tierra", "tiempo", "fuerza",
   "barco", "cielo", "piedra", "bosque", "ciudad", "campo", "puerta", "fuego",
-  "monte", "patio", "libro", "techo", "roca", "noche", "tarde", "manana",
+  "monte", "patio", "libro", "techo", "roca", "noche", "tarde", "mañana",
 ];
 
 export function getStartingWord(): string {
