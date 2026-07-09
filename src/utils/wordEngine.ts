@@ -8,9 +8,17 @@ export function normalize(word: string): string {
     .trim();
 }
 
+// Palabras comunes que faltan en "an-array-of-spanish-words" (confirmado
+// por gameplay real). Se van sumando acá a medida que aparecen huecos.
+const EXTRA_WORDS = [
+  "brocoli",
+];
+
 // Build Set and index once at module load
 const wordSet = new Set<string>(
-  (rawWords as unknown as string[]).filter((w) => w.length >= 3).map(normalize)
+  [...(rawWords as unknown as string[]), ...EXTRA_WORDS]
+    .filter((w) => w.length >= 3)
+    .map(normalize)
 );
 
 const wordIndex = new Map<string, string[]>();
