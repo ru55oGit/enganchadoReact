@@ -293,17 +293,13 @@ export default function Game() {
             </Typography>
           </Box>
         </Box>
-
-        {/* Barra de tiempo */}
-        <Box sx={{ height: 8, backgroundColor: "rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden" }}>
-          <Box sx={{
-            height: "100%",
-            width: `${timerPct}%`,
-            backgroundColor: timerColor,
-            borderRadius: 4,
-            transition: "width 0.9s linear, background-color 0.3s",
-          }} />
+        {/* Error */}
+        <Box sx={{ minHeight: 20, textAlign: "center", mt: -1 }}>
+          {state.errorMsg && (
+            <Typography sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
+          )}
         </Box>
+        
         {/* Input display (no native keyboard) */}
         <Box sx={{
           backgroundColor: "#fff", borderRadius: "10px",
@@ -333,12 +329,15 @@ export default function Game() {
              →
           </Button>
         </Box>
-
-        {/* Error */}
-        <Box sx={{ minHeight: 20, textAlign: "center", mt: -1 }}>
-          {state.errorMsg && (
-            <Typography sx={{ color: "#fff", fontSize: 14, fontWeight: 700 }}>{state.errorMsg}</Typography>
-          )}
+        {/* Barra de tiempo */}
+        <Box sx={{ height: 8, backgroundColor: "rgba(255,255,255,0.25)", borderRadius: 4, overflow: "hidden" }}>
+          <Box sx={{
+            height: "100%",
+            width: `${timerPct}%`,
+            backgroundColor: timerColor,
+            borderRadius: 4,
+            transition: "width 0.9s linear, background-color 0.3s",
+          }} />
         </Box>
 
         {/* <Button onClick={submitWord} variant="contained" fullWidth sx={{
