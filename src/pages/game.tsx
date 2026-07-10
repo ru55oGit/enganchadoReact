@@ -289,11 +289,11 @@ export default function Game() {
             </Box>
           </Box>
 
-          {exampleSolutions.length > 0 && (
-            <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
-              <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
-                {t.possibleSolutionsLabel}
-              </Typography>
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
+            <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
+              {t.possibleSolutionsLabel}
+            </Typography>
+            {exampleSolutions.length > 0 ? (
               <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
                 {exampleSolutions.map((w) => (
                   <Box key={w} sx={{ px: 1.5, py: 0.5, borderRadius: "6px", backgroundColor: "#e5f7ec", border: "1px solid #86e0ac" }}>
@@ -303,8 +303,12 @@ export default function Game() {
                   </Box>
                 ))}
               </Box>
-            </Box>
-          )}
+            ) : (
+              <Typography sx={{ fontSize: 13, color: "#999", fontStyle: "italic" }}>
+                {t.noPossibleSolutions}
+              </Typography>
+            )}
+          </Box>
 
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,

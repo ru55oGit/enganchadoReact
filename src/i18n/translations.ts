@@ -40,6 +40,7 @@ export interface Translation {
   chainOfWords: (n: number) => string;
   yourChainLabel: string;
   possibleSolutionsLabel: string;
+  noPossibleSolutions: string;
   playAgainButton: string;
   backToHomeButton: string;
   currentWordLabel: string;
@@ -92,6 +93,7 @@ const es: Translation = {
   chainOfWords: (n) => `Cadena de ${n} palabras`,
   yourChainLabel: "Tu cadena",
   possibleSolutionsLabel: "Posibles Soluciones",
+  noPossibleSolutions: "No tengo soluciones posibles en mi diccionario.",
   playAgainButton: "Jugar de nuevo",
   backToHomeButton: "Volver al inicio",
   currentWordLabel: "Palabra actual",
@@ -142,6 +144,7 @@ const en: Translation = {
   chainOfWords: (n) => `Chain of ${n} word${n === 1 ? "" : "s"}`,
   yourChainLabel: "Your chain",
   possibleSolutionsLabel: "Possible Solutions",
+  noPossibleSolutions: "I don't have any possible solutions in my dictionary.",
   playAgainButton: "Play again",
   backToHomeButton: "Back to home",
   currentWordLabel: "Current word",
@@ -193,6 +196,7 @@ const pt: Translation = {
   chainOfWords: (n) => `Cadeia de ${n} palavra${n === 1 ? "" : "s"}`,
   yourChainLabel: "Sua cadeia",
   possibleSolutionsLabel: "Soluções Possíveis",
+  noPossibleSolutions: "Não tenho soluções possíveis no meu dicionário.",
   playAgainButton: "Jogar de novo",
   backToHomeButton: "Voltar ao início",
   currentWordLabel: "Palavra atual",
