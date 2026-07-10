@@ -96,8 +96,8 @@ export default function Home() {
 
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
             <Button variant="contained" onClick={() => navigate("/game")} sx={{
-              backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800,
-              borderRadius: 999, px: 4, py: 1.4, fontSize: 18,
+              backgroundColor: "#07d136", color: "#fff", fontWeight: 800,
+              borderRadius: 999, px: 3, py: 1.4, fontSize: 18,
               "&:hover": { backgroundColor: "#fff" },
             }}>
               {t.playButton}

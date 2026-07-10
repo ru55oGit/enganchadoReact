@@ -151,7 +151,7 @@ export default function Game() {
         setState(p => ({ ...p, input: p.input.slice(0, -1), errorMsg: "" }));
         return;
       }
-      if (/^[a-záéíóúüñA-ZÁÉÍÓÚÜÑ]$/.test(e.key)) {
+      if (/^[a-záéíóúüñãõâêôçàA-ZÁÉÍÓÚÜÑÃÕÂÊÔÇÀ]$/.test(e.key)) {
         setState(p => ({ ...p, input: p.input + e.key.toLowerCase(), errorMsg: "" }));
       }
     }

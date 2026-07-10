@@ -15,13 +15,23 @@ const ROWS_EN = [
   ["Z","X","C","V","B","N","M","⌫"],
 ];
 
+const ROWS_PT = [
+  ["Q","W","E","R","T","Y","U","I","O","P"],
+  ["A","S","D","F","G","H","J","K","L","Ç"],
+  ["Z","X","C","V","B","N","M","⌫"],
+  ["Ã","Õ","Â","Ê","Ô"],
+  ["Á","É","Í","Ó","Ú","À"],
+];
+
 interface Props {
   onKey: (key: string) => void;
   lang?: "es" | "en" | "pt";
 }
 
+const ROWS_BY_LANG = { es: ROWS_ES, en: ROWS_EN, pt: ROWS_PT };
+
 export default function VirtualKeyboard({ onKey, lang = "es" }: Props) {
-  const ROWS = lang === "es" ? ROWS_ES : ROWS_EN;
+  const ROWS = ROWS_BY_LANG[lang];
   return (
     <Box sx={{
       display: { md: "none", xs: "block" },
