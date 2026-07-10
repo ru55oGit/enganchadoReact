@@ -33,7 +33,7 @@ export default function Home() {
     nowHour < 12 ? t.greetingMorning : nowHour < 20 ? t.greetingAfternoon : t.greetingEvening;
 
   return (
-    <Layout>
+    <Layout showFooter>
       <Box sx={{ width: "100%", px: { xs: 1.5, md: 2 }, pb: 2, display: "flex", flexDirection: "column", gap: 2 }}>
 
         <Typography variant="h2" sx={{

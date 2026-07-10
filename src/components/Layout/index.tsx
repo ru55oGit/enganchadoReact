@@ -20,9 +20,10 @@ const RAIN_EMOJIS = [
 interface LayoutProps {
   children: React.ReactNode;
   onBack?: () => void;
+  showFooter?: boolean;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
+const Layout: React.FC<LayoutProps> = ({ children, onBack, showFooter = false }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -134,6 +135,18 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
         }}>
           {children}
         </Container>
+
+        {showFooter && (
+          <Box component="footer" sx={{
+            textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.7)",
+            py: 2, position: "relative", zIndex: 5,
+          }}>
+            © {new Date().getFullYear()} {t.appName} ·{" "}
+            <a href="/privacidad" style={{ color: "inherit", textDecoration: "underline" }}>
+              {t.privacyPolicyLabel}
+            </a>
+          </Box>
+        )}
       </Box>
 
       <Drawer anchor="left" open={menuOpen} onClose={() => setMenuOpen(false)}
@@ -153,6 +166,12 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack }) => {
               <ListItemButton onClick={() => { setMenuOpen(false); navigate("/game"); }}
                 sx={{ px: 3, py: 2, backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", "&:hover": { backgroundColor: "#f5f5f5" } }}>
                 <ListItemText primary={t.drawerPlay} primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding>
+              <ListItemButton onClick={() => { setMenuOpen(false); navigate("/privacidad"); }}
+                sx={{ px: 3, py: 2, backgroundColor: "#fff", borderBottom: "1px solid #e0e0e0", "&:hover": { backgroundColor: "#f5f5f5" } }}>
+                <ListItemText primary={t.privacyPolicyLabel} primaryTypographyProps={{ fontSize: 22, fontWeight: 500, color: ACCENT }} />
               </ListItemButton>
             </ListItem>
           </List>

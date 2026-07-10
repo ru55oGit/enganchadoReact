@@ -5,6 +5,7 @@ export interface Translation {
   appName: string;
   drawerHome: string;
   drawerPlay: string;
+  privacyPolicyLabel: string;
 
   // Home
   tagline: string;
@@ -51,15 +52,16 @@ export interface Translation {
 }
 
 const es: Translation = {
-  appName: "Enganchado",
+  appName: "Enganchalo",
   drawerHome: "Inicio",
   drawerPlay: "Jugar",
+  privacyPolicyLabel: "Política de Privacidad",
 
   tagline: "pensá · enganchá · ganás",
   greetingMorning: "Buenos días ☀️",
   greetingAfternoon: "Buenas tardes 🌤️",
   greetingEvening: "Buenas noches 🌙",
-  readyToPlay: "¿Listo para jugar Enganchado?",
+  readyToPlay: "¿Listo para jugar Enganchalo?",
   exampleChainLabel: "Ejemplo de cadena",
   exampleChain: ["CASA", "SAPO", "POZO", "ZORRO", "ROPERO"],
   exampleExplanation: "La última sílaba de ROPERO es RO → tu palabra empieza con RO",
@@ -70,8 +72,8 @@ const es: Translation = {
   wordsLabel: "palabras",
   pointsLabel: "puntos",
   dateLocale: "es-AR",
-  whatIsTitle: "¿Qué es Enganchado?",
-  whatIsBody: "Enganchado es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?",
+  whatIsTitle: "¿Qué es Enganchalo?",
+  whatIsBody: "Enganchalo es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?",
   howToPlayTitle: "¿Cómo jugar?",
   howToPlayBody: "Te damos una palabra de inicio. Usá su última sílaba para arrancar la siguiente, y así sucesivamente. Tenés 15 segundos por turno. No valen monosílabos ni palabras repetidas. Cuanto más larga la cadena y más rápido respondés, más puntos sumás.",
 
@@ -97,9 +99,10 @@ const es: Translation = {
 };
 
 const en: Translation = {
-  appName: "Enganchado",
+  appName: "Enganchalo",
   drawerHome: "Home",
   drawerPlay: "Play",
+  privacyPolicyLabel: "Privacy Policy",
   tagline: "Word Chain",
   greetingMorning: "Good morning ☀️",
   greetingAfternoon: "Good afternoon 🌤️",
@@ -142,9 +145,10 @@ const en: Translation = {
 };
 
 const pt: Translation = {
-  appName: "Enganchado",
+  appName: "Enganchalo",
   drawerHome: "Início",
   drawerPlay: "Jogar",
+  privacyPolicyLabel: "Política de Privacidade",
 
   tagline: "Palavra Encadeada",
   greetingMorning: "Bom dia ☀️",
