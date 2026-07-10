@@ -27,6 +27,7 @@ interface GameState {
   timeLeft: number;
   errorMsg: string;
   input: string;
+  startedAt: number | null;
 }
 
 function initGame(engine: WordGameEngine): GameState {
@@ -42,6 +43,7 @@ function initGame(engine: WordGameEngine): GameState {
     timeLeft: TIMER_START,
     errorMsg: "",
     input: "",
+    startedAt: null,
   };
 }
 
@@ -100,7 +102,8 @@ export default function Game() {
         if (prev.phase !== "playing") return prev;
         if (prev.timeLeft <= 1) {
           clearInterval(id);
-          maybeSaveBestChain(currentLanguage, prev.chain, prev.score);
+          const timeUsedSec = prev.startedAt ? Math.round((Date.now() - prev.startedAt) / 1000) : 0;
+          maybeSaveBestChain(currentLanguage, prev.chain, prev.score, timeUsedSec);
           return { ...prev, phase: "gameover", timeLeft: 0 };
         }
         return { ...prev, timeLeft: prev.timeLeft - 1 };
@@ -112,8 +115,8 @@ export default function Game() {
   function startGame() {
     setState((p) =>
       p.phase === "idle"
-        ? { ...p, phase: "playing" }
-        : { ...initGame(engine), phase: "playing" }
+        ? { ...p, phase: "playing", startedAt: Date.now() }
+        : { ...initGame(engine), phase: "playing", startedAt: Date.now() }
     );
   }
 

@@ -13,6 +13,7 @@ export interface BestChain {
   words: string[];
   score: number;
   date: string;
+  timeUsedSec?: number;
 }
 
 function load(lang: SupportedLanguage): BestChain | null {
@@ -33,12 +34,17 @@ export function getBestChain(lang: SupportedLanguage): BestChain | null {
   return load(lang);
 }
 
-export function maybeSaveBestChain(lang: SupportedLanguage, words: string[], score: number): void {
+export function maybeSaveBestChain(
+  lang: SupportedLanguage,
+  words: string[],
+  score: number,
+  timeUsedSec: number
+): void {
   const current = load(lang);
   const chainLength = words.length - 1; // exclude starting word
   const currentBest = current ? current.words.length - 1 : -1;
   if (chainLength <= currentBest) return;
 
   const isoDate = new Date().toISOString().slice(0, 10);
-  localStorage.setItem(storeKey(lang), JSON.stringify({ words, score, date: isoDate }));
+  localStorage.setItem(storeKey(lang), JSON.stringify({ words, score, date: isoDate, timeUsedSec }));
 }

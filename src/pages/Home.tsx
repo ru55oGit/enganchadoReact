@@ -12,6 +12,12 @@ import { getBestChain, BestChain } from "../utils/gameStore";
 const ACCENT = "#e74c3c";
 const CARD_BG = "#eb6f62";
 
+function formatTime(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function Home() {
   const navigate = useNavigate();
   const { t, currentLanguage } = useLanguage();
@@ -123,7 +129,8 @@ export default function Home() {
               {t.bestStreakTitle}
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#888", mb: 2 }}>
-              {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel} ·{" "}
+              {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel}
+              {bestChain.timeUsedSec != null && ` · ${formatTime(bestChain.timeUsedSec)} min`} ·{" "}
               {(() => {
                 const [y, m, d] = bestChain.date.split("-").map(Number);
                 return new Date(y, m - 1, d).toLocaleDateString(t.dateLocale, {
