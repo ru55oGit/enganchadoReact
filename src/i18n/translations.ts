@@ -32,6 +32,8 @@ export interface Translation {
   startingWordLabel: string;
   idleInstruction: string;
   chooseWordLabel: string;
+  scoringTitle: string;
+  scoringExplanation: string;
   startButton: string;
   gameOverTitle: string;
   scoreLabel: string;
@@ -81,6 +83,8 @@ const es: Translation = {
   startingWordLabel: "Palabra inicial",
   idleInstruction: "Tomá la última sílaba y enganchá la siguiente palabra",
   chooseWordLabel: "Elegí tu palabra para un desafío con amigos con el mismo comienzo",
+  scoringTitle: "¿Cómo se puntúa?",
+  scoringExplanation: "10 puntos base por palabra + 5 si respondés en los primeros 5 segundos (el reloj arranca en 15) + 1 punto por cada letra que supere las 4.",
   startButton: "¡Empezar!",
   gameOverTitle: "¡Se acabó el tiempo!",
   scoreLabel: "Puntaje",
@@ -128,6 +132,8 @@ const en: Translation = {
   startingWordLabel: "Starting word",
   idleInstruction: "Take the last letter and link the next word",
   chooseWordLabel: "Pick your word for a challenge with friends using the same start",
+  scoringTitle: "How does scoring work?",
+  scoringExplanation: "10 base points per word + 5 if you answer within the first 5 seconds (the clock starts at 15) + 1 point for each letter over 4.",
   startButton: "Start!",
   gameOverTitle: "Time's up!",
   scoreLabel: "Score",
@@ -176,6 +182,8 @@ const pt: Translation = {
   startingWordLabel: "Palavra inicial",
   idleInstruction: "Pegue a última letra e encadeie a próxima palavra",
   chooseWordLabel: "Escolha sua palavra para um desafio com amigos com o mesmo começo",
+  scoringTitle: "Como funciona a pontuação?",
+  scoringExplanation: "10 pontos base por palavra + 5 se você responder nos primeiros 5 segundos (o relógio começa em 15) + 1 ponto para cada letra acima de 4.",
   startButton: "Começar!",
   gameOverTitle: "Tempo esgotado!",
   scoreLabel: "Pontuação",

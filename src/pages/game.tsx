@@ -227,6 +227,15 @@ export default function Game() {
             </FormControl>
           </Box>
 
+          <Box sx={{ borderRadius: "16px", backgroundColor: "rgba(255,255,255,0.14)", p: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 0.5 }}>
+            <Typography sx={{ fontSize: 13, color: "#fff", fontWeight: 700, textAlign: "center" }}>
+              {t.scoringTitle}
+            </Typography>
+            <Typography sx={{ fontSize: 12, color: "rgba(255,255,255,0.85)", textAlign: "center", lineHeight: 1.5 }}>
+              {t.scoringExplanation}
+            </Typography>
+          </Box>
+
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 20,
             py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
