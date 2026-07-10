@@ -207,15 +207,27 @@ export function wordStartsWithSyllable(word: string, syllable: string): boolean 
   return getFirstSyllable(word) === normalize(syllable);
 }
 
-export function getCpuWord(syllable: string, usedWords: Set<string>): string | null {
+function getCandidates(syllable: string, usedWords: Set<string>): string[] {
   const normSyl = normalize(syllable);
   const key = normSyl.slice(0, 2);
   const candidates = wordIndex.get(key) ?? [];
-  const available = candidates.filter(
+  return candidates.filter(
     (w) => getFirstSyllable(w) === normSyl && !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
   );
+}
+
+export function getCpuWord(syllable: string, usedWords: Set<string>): string | null {
+  const available = getCandidates(syllable, usedWords);
   if (available.length === 0) return null;
   return available[Math.floor(Math.random() * available.length)];
+}
+
+// Palabras de ejemplo que sí hubieran continuado la cadena — se muestran
+// en la pantalla de game over cuando el jugador se queda sin tiempo.
+export function getExampleSolutions(syllable: string, usedWords: Set<string>, count: number): string[] {
+  const available = getCandidates(syllable, usedWords);
+  const shuffled = [...available].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
 }
 
 // "patio" (tio, hiato heredado de "tío") y "ciudad" (dad: la única

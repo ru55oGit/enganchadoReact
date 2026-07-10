@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -85,6 +85,12 @@ export default function Game() {
   const { t, currentLanguage } = useLanguage();
   const engine = getGameEngine(currentLanguage);
   const [state, setState] = useState<GameState>(() => initGame(engine));
+
+  // Se calculan una sola vez al llegar a game over, no en cada render.
+  const exampleSolutions = useMemo(
+    () => (state.phase === "gameover" ? engine.getExampleSolutions(state.challengeUnit, state.usedWords, 3) : []),
+    [state.phase]
+  );
 
   // Timer
   useEffect(() => {
@@ -282,6 +288,23 @@ export default function Game() {
               ))}
             </Box>
           </Box>
+
+          {exampleSolutions.length > 0 && (
+            <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
+              <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
+                {t.possibleSolutionsLabel}
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.75 }}>
+                {exampleSolutions.map((w) => (
+                  <Box key={w} sx={{ px: 1.5, py: 0.5, borderRadius: "6px", backgroundColor: "#e5f7ec", border: "1px solid #86e0ac" }}>
+                    <Typography sx={{ color: "#1a9c52", fontFamily: "monospace", fontSize: 13, fontWeight: 700 }}>
+                      {w.toUpperCase()}
+                    </Typography>
+                  </Box>
+                ))}
+              </Box>
+            </Box>
+          )}
 
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 18,

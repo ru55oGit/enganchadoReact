@@ -9,6 +9,14 @@ const wordSet = new Set<string>(
   (rawWords as unknown as string[]).filter((w) => w.length >= 3).map(normalize)
 );
 
+// Index by first letter, used to look up example solutions quickly.
+const wordIndex = new Map<string, string[]>();
+for (const w of wordSet) {
+  const key = w[0];
+  if (!wordIndex.has(key)) wordIndex.set(key, []);
+  wordIndex.get(key)!.push(w);
+}
+
 export function isValidWord(word: string): boolean {
   return wordSet.has(normalize(word));
 }
@@ -23,6 +31,16 @@ export function getChallengeLetter(word: string): string {
 
 export function wordStartsWithLetter(word: string, letter: string): boolean {
   return normalize(word).startsWith(normalize(letter));
+}
+
+// Example words that would have continued the chain — shown on the game
+// over screen when the player runs out of time.
+export function getExampleSolutions(letter: string, usedWords: Set<string>, count: number): string[] {
+  const normLetter = normalize(letter);
+  const candidates = wordIndex.get(normLetter) ?? [];
+  const available = candidates.filter((w) => !usedWords.has(w));
+  const shuffled = [...available].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
 }
 
 const STARTING_WORDS = [

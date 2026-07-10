@@ -39,6 +39,7 @@ export interface Translation {
   scoreLabel: string;
   chainOfWords: (n: number) => string;
   yourChainLabel: string;
+  possibleSolutionsLabel: string;
   playAgainButton: string;
   backToHomeButton: string;
   currentWordLabel: string;
@@ -90,6 +91,7 @@ const es: Translation = {
   scoreLabel: "Puntaje",
   chainOfWords: (n) => `Cadena de ${n} palabras`,
   yourChainLabel: "Tu cadena",
+  possibleSolutionsLabel: "Posibles Soluciones",
   playAgainButton: "Jugar de nuevo",
   backToHomeButton: "Volver al inicio",
   currentWordLabel: "Palabra actual",
@@ -139,6 +141,7 @@ const en: Translation = {
   scoreLabel: "Score",
   chainOfWords: (n) => `Chain of ${n} word${n === 1 ? "" : "s"}`,
   yourChainLabel: "Your chain",
+  possibleSolutionsLabel: "Possible Solutions",
   playAgainButton: "Play again",
   backToHomeButton: "Back to home",
   currentWordLabel: "Current word",
@@ -189,6 +192,7 @@ const pt: Translation = {
   scoreLabel: "Pontuação",
   chainOfWords: (n) => `Cadeia de ${n} palavra${n === 1 ? "" : "s"}`,
   yourChainLabel: "Sua cadeia",
+  possibleSolutionsLabel: "Soluções Possíveis",
   playAgainButton: "Jogar de novo",
   backToHomeButton: "Voltar ao início",
   currentWordLabel: "Palavra atual",

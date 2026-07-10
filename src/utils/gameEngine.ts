@@ -5,6 +5,7 @@ import {
   getChallengeSyllable,
   getStartingWord as getStartingWordEs,
   getStartingWords as getStartingWordsEs,
+  getExampleSolutions as getExampleSolutionsEs,
   wordStartsWithSyllable,
 } from "./wordEngine";
 import {
@@ -13,6 +14,7 @@ import {
   getChallengeLetter as getChallengeLetterEn,
   getStartingWord as getStartingWordEn,
   getStartingWords as getStartingWordsEn,
+  getExampleSolutions as getExampleSolutionsEn,
   wordStartsWithLetter as wordStartsWithLetterEn,
 } from "./wordEngineEn";
 import {
@@ -21,6 +23,7 @@ import {
   getChallengeLetter as getChallengeLetterPt,
   getStartingWord as getStartingWordPt,
   getStartingWords as getStartingWordsPt,
+  getExampleSolutions as getExampleSolutionsPt,
   wordStartsWithLetter as wordStartsWithLetterPt,
 } from "./wordEnginePt";
 import { SupportedLanguage } from "../i18n/translations";
@@ -35,6 +38,7 @@ export interface WordGameEngine {
   isValidWord(word: string): boolean;
   isRejected(word: string): boolean;
   normalize(word: string): string;
+  getExampleSolutions(unit: string, usedWords: Set<string>, count: number): string[];
 }
 
 const esEngine: WordGameEngine = {
@@ -45,6 +49,7 @@ const esEngine: WordGameEngine = {
   isValidWord: isValidWordEs,
   isRejected: isMonosyllable,
   normalize: normalizeEs,
+  getExampleSolutions: getExampleSolutionsEs,
 };
 
 const enEngine: WordGameEngine = {
@@ -56,6 +61,7 @@ const enEngine: WordGameEngine = {
   // English monosyllables (cat, dog, run...) are far too common to ban.
   isRejected: () => false,
   normalize: normalizeEn,
+  getExampleSolutions: getExampleSolutionsEn,
 };
 
 const ptEngine: WordGameEngine = {
@@ -66,6 +72,7 @@ const ptEngine: WordGameEngine = {
   isValidWord: isValidWordPt,
   isRejected: () => false,
   normalize: normalizePt,
+  getExampleSolutions: getExampleSolutionsPt,
 };
 
 const engines: Record<SupportedLanguage, WordGameEngine> = {
