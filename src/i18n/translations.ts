@@ -31,6 +31,7 @@ export interface Translation {
   // Game
   startingWordLabel: string;
   idleInstruction: string;
+  chooseWordLabel: string;
   startButton: string;
   gameOverTitle: string;
   scoreLabel: string;
@@ -79,6 +80,7 @@ const es: Translation = {
 
   startingWordLabel: "Palabra inicial",
   idleInstruction: "Tomá la última sílaba y enganchá la siguiente palabra",
+  chooseWordLabel: "Elegí tu palabra para un desafío con amigos con el mismo comienzo",
   startButton: "¡Empezar!",
   gameOverTitle: "¡Se acabó el tiempo!",
   scoreLabel: "Puntaje",
@@ -125,6 +127,7 @@ const en: Translation = {
 
   startingWordLabel: "Starting word",
   idleInstruction: "Take the last letter and link the next word",
+  chooseWordLabel: "Pick your word for a challenge with friends using the same start",
   startButton: "Start!",
   gameOverTitle: "Time's up!",
   scoreLabel: "Score",
@@ -172,6 +175,7 @@ const pt: Translation = {
 
   startingWordLabel: "Palavra inicial",
   idleInstruction: "Pegue a última letra e encadeie a próxima palavra",
+  chooseWordLabel: "Escolha sua palavra para um desafio com amigos com o mesmo começo",
   startButton: "Começar!",
   gameOverTitle: "Tempo esgotado!",
   scoreLabel: "Pontuação",

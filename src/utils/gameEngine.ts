@@ -4,6 +4,7 @@ import {
   isMonosyllable,
   getChallengeSyllable,
   getStartingWord as getStartingWordEs,
+  getStartingWords as getStartingWordsEs,
   wordStartsWithSyllable,
 } from "./wordEngine";
 import {
@@ -11,6 +12,7 @@ import {
   isValidWord as isValidWordEn,
   getChallengeLetter as getChallengeLetterEn,
   getStartingWord as getStartingWordEn,
+  getStartingWords as getStartingWordsEn,
   wordStartsWithLetter as wordStartsWithLetterEn,
 } from "./wordEngineEn";
 import {
@@ -18,6 +20,7 @@ import {
   isValidWord as isValidWordPt,
   getChallengeLetter as getChallengeLetterPt,
   getStartingWord as getStartingWordPt,
+  getStartingWords as getStartingWordsPt,
   wordStartsWithLetter as wordStartsWithLetterPt,
 } from "./wordEnginePt";
 import { SupportedLanguage } from "../i18n/translations";
@@ -26,6 +29,7 @@ import { SupportedLanguage } from "../i18n/translations";
 // behind one shape so game.tsx doesn't need to branch on language itself.
 export interface WordGameEngine {
   getStartingWord(): string;
+  getStartingWords(): string[];
   getChallengeUnit(word: string): string;
   unitMatchesWord(word: string, unit: string): boolean;
   isValidWord(word: string): boolean;
@@ -35,6 +39,7 @@ export interface WordGameEngine {
 
 const esEngine: WordGameEngine = {
   getStartingWord: getStartingWordEs,
+  getStartingWords: getStartingWordsEs,
   getChallengeUnit: getChallengeSyllable,
   unitMatchesWord: wordStartsWithSyllable,
   isValidWord: isValidWordEs,
@@ -44,6 +49,7 @@ const esEngine: WordGameEngine = {
 
 const enEngine: WordGameEngine = {
   getStartingWord: getStartingWordEn,
+  getStartingWords: getStartingWordsEn,
   getChallengeUnit: getChallengeLetterEn,
   unitMatchesWord: wordStartsWithLetterEn,
   isValidWord: isValidWordEn,
@@ -54,6 +60,7 @@ const enEngine: WordGameEngine = {
 
 const ptEngine: WordGameEngine = {
   getStartingWord: getStartingWordPt,
+  getStartingWords: getStartingWordsPt,
   getChallengeUnit: getChallengeLetterPt,
   unitMatchesWord: wordStartsWithLetterPt,
   isValidWord: isValidWordPt,

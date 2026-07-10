@@ -30,11 +30,17 @@ export function wordStartsWithLetter(word: string, letter: string): boolean {
   return normalize(word).startsWith(normalize(letter));
 }
 
+// Con acentos: solo importan para mostrarse bien (normalize() los saca
+// igual para toda la lógica de juego/comparación).
 const STARTING_WORDS = [
-  "gato", "cachorro", "sol", "arvore", "casa", "rio", "montanha", "oceano", "floresta", "jardim",
-  "ponte", "castelo", "dragao", "ilha", "selva", "foguete", "planeta", "tigre", "aguia", "golfinho",
+  "gato", "cachorro", "sol", "árvore", "casa", "rio", "montanha", "oceano", "floresta", "jardim",
+  "ponte", "castelo", "dragão", "ilha", "selva", "foguete", "planeta", "tigre", "águia", "golfinho",
 ];
 
 export function getStartingWord(): string {
   return STARTING_WORDS[Math.floor(Math.random() * STARTING_WORDS.length)];
+}
+
+export function getStartingWords(): string[] {
+  return [...STARTING_WORDS].sort((a, b) => a.localeCompare(b, "pt"));
 }

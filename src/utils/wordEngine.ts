@@ -235,6 +235,10 @@ export function getStartingWord(): string {
   return STARTING_WORDS[Math.floor(Math.random() * STARTING_WORDS.length)];
 }
 
+export function getStartingWords(): string[] {
+  return [...STARTING_WORDS].sort((a, b) => a.localeCompare(b, "es"));
+}
+
 // getSyllables kept for compatibility but not used internally
 export function getSyllables(word: string): string[] {
   return [getLastSyllable(word)];

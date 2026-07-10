@@ -3,6 +3,9 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
 import Layout from "../components/Layout";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -108,6 +111,17 @@ export default function Game() {
     );
   }
 
+  function handleChooseStartingWord(e: SelectChangeEvent) {
+    const word = e.target.value;
+    setState((p) => ({
+      ...p,
+      currentWord: word,
+      challengeUnit: engine.getChallengeUnit(word),
+      chain: [word],
+      usedWords: new Set([engine.normalize(word)]),
+    }));
+  }
+
   const submitWord = useCallback(() => {
     setState((p) => {
       const word = p.input.trim().toLowerCase();
@@ -189,6 +203,30 @@ export default function Game() {
               {t.idleInstruction}
             </Typography>
           </Box>
+
+          <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2.5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
+            <Typography sx={{ fontSize: 14, color: "#666", textAlign: "center" }}>
+              {t.chooseWordLabel}
+            </Typography>
+            <FormControl fullWidth size="small">
+              <Select
+                value={state.currentWord}
+                onChange={handleChooseStartingWord}
+                sx={{
+                  backgroundColor: "#fff",
+                  borderRadius: "8px",
+                  fontFamily: "monospace",
+                  fontWeight: 700,
+                  color: ACCENT,
+                }}
+              >
+                {engine.getStartingWords().map((word) => (
+                  <MenuItem key={word} value={word}>{word.toUpperCase()}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
+
           <Button onClick={startGame} variant="contained" size="large" sx={{
             backgroundColor: "#f3f3f3", color: ACCENT, fontWeight: 800, fontSize: 20,
             py: 1.8, borderRadius: 999, textTransform: "none", "&:hover": { backgroundColor: "#fff" },
