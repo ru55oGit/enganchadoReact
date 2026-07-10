@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import Layout from "../components/Layout";
 import LanguageSelector from "../components/LanguageSelector";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -95,16 +96,22 @@ export default function Home() {
           </Box>
 
           <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 1, flexWrap: "wrap" }}>
-            <Button variant="contained" onClick={() => navigate("/game")} sx={{
-              backgroundColor: "#07d136", color: "#fff", fontWeight: 800,
-              borderRadius: 999, px: 3, py: 1.4, fontSize: 18,
-              "&:hover": { backgroundColor: "#fff" },
-            }}>
+            <Button
+              variant="contained"
+              onClick={() => navigate("/game")}
+              startIcon={<PlayArrowRoundedIcon sx={{ fontSize: "28px !important" }} />}
+              sx={{
+                backgroundColor: "#fff", color: ACCENT, fontWeight: 800,
+                borderRadius: 999, px: 2, py: 1.8, fontSize: 18,
+                boxShadow: "0 0 0 4px rgba(255,255,255,0.35), 0 10px 24px rgba(0,0,0,0.4)",
+                "&:hover": { backgroundColor: "#fff", boxShadow: "0 0 0 4px rgba(255,255,255,0.5), 0 12px 26px rgba(0,0,0,0.45)" },
+              }}
+            >
               {t.playButton}
             </Button>
             <Box sx={{ textAlign: "right", color: "#fff", fontWeight: 700 }}>
-              <Typography sx={{ fontSize: 16 }}>{t.freeModeLabel}</Typography>
-              <Typography sx={{ fontSize: 14, color: "rgba(255,255,255,0.8)" }}>{t.freeModeSub}</Typography>
+              <Typography sx={{ fontSize: 15 }}>{t.freeModeLabel}</Typography>
+              <Typography sx={{ fontSize: 13, color: "rgba(255,255,255,0.8)" }}>{t.freeModeSub}</Typography>
             </Box>
           </Box>
         </Box>

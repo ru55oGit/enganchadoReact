@@ -97,11 +97,10 @@ const es: Translation = {
 };
 
 const en: Translation = {
-  appName: "Word Chain",
+  appName: "Enganchado",
   drawerHome: "Home",
   drawerPlay: "Play",
-
-  tagline: "think · link · win",
+  tagline: "Word Chain",
   greetingMorning: "Good morning ☀️",
   greetingAfternoon: "Good afternoon 🌤️",
   greetingEvening: "Good evening 🌙",
@@ -143,11 +142,11 @@ const en: Translation = {
 };
 
 const pt: Translation = {
-  appName: "Palavra Encadeada",
+  appName: "Enganchado",
   drawerHome: "Início",
   drawerPlay: "Jogar",
 
-  tagline: "pense · encadeie · vença",
+  tagline: "Palavra Encadeada",
   greetingMorning: "Bom dia ☀️",
   greetingAfternoon: "Boa tarde 🌤️",
   greetingEvening: "Boa noite 🌙",
