@@ -105,14 +105,16 @@ export default function Home() {
             <Button
               variant="contained"
               onClick={() => navigate("/game")}
-              startIcon={<PlayArrowRoundedIcon sx={{ fontSize: "28px !important" }} />}
               sx={{
                 backgroundColor: "#fff", color: ACCENT, fontWeight: 800,
-                borderRadius: 999, px: 2, py: 1.8, fontSize: 18,
+                borderRadius: "24px", width: 110, aspectRatio: "1", minWidth: 0, p: 0,
+                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 0.3,
+                fontSize: 15,
                 boxShadow: "0 0 0 4px rgba(255,255,255,0.35), 0 10px 24px rgba(0,0,0,0.4)",
                 "&:hover": { backgroundColor: "#fff", boxShadow: "0 0 0 4px rgba(255,255,255,0.5), 0 12px 26px rgba(0,0,0,0.45)" },
               }}
             >
+              <PlayArrowRoundedIcon sx={{ fontSize: "30px !important" }} />
               {t.playButton}
             </Button>
             <Box sx={{ textAlign: "right", color: "#fff", fontWeight: 700 }}>
