@@ -12,6 +12,7 @@ export interface Translation {
   greetingMorning: string;
   greetingAfternoon: string;
   greetingEvening: string;
+  daysWithoutPlayingMessage: (days: number) => string;
   readyToPlay: string;
   exampleChainLabel: string;
   exampleChain: string[];
@@ -66,6 +67,7 @@ const es: Translation = {
   greetingMorning: "Buenos días ☀️",
   greetingAfternoon: "Buenas tardes 🌤️",
   greetingEvening: "Buenas noches 🌙",
+  daysWithoutPlayingMessage: (days) => `hace ${days} días que no jugás`,
   readyToPlay: "¿Listo para jugar Enganchalo?",
   exampleChainLabel: "Ejemplo de cadena",
   exampleChain: ["CASA", "SAPO", "POZO", "ZORRO", "ROPERO"],
@@ -117,6 +119,7 @@ const en: Translation = {
   greetingMorning: "Good morning ☀️",
   greetingAfternoon: "Good afternoon 🌤️",
   greetingEvening: "Good evening 🌙",
+  daysWithoutPlayingMessage: (days) => `it's been ${days} days since you last played`,
   readyToPlay: "Ready to play Word Chain?",
   exampleChainLabel: "Example chain",
   exampleChain: ["CAT", "TIGER", "ROCKET", "TOWER", "RIVER"],
@@ -169,6 +172,7 @@ const pt: Translation = {
   greetingMorning: "Bom dia ☀️",
   greetingAfternoon: "Boa tarde 🌤️",
   greetingEvening: "Boa noite 🌙",
+  daysWithoutPlayingMessage: (days) => `faz ${days} dias que você não joga`,
   readyToPlay: "Pronto para jogar Palavra Encadeada?",
   exampleChainLabel: "Exemplo de cadeia",
   exampleChain: ["CASA", "ÁRVORE", "ESCOLA", "AMOR", "RIO"],

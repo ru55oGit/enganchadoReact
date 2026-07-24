@@ -11,6 +11,7 @@ import VirtualKeyboard from "../components/VirtualKeyboard";
 import { useLanguage } from "../i18n/LanguageContext";
 import { getGameEngine, WordGameEngine } from "../utils/gameEngine";
 import { maybeSaveBestChain } from "../utils/gameStore";
+import { recordLastPlayed } from "../utils/lastPlayedState";
 
 const ACCENT = "#e74c3c";
 const TIMER_START = 15;
@@ -87,6 +88,10 @@ export default function Game() {
   const { t, currentLanguage } = useLanguage();
   const engine = getGameEngine(currentLanguage);
   const [state, setState] = useState<GameState>(() => initGame(engine));
+
+  useEffect(() => {
+    recordLastPlayed();
+  }, []);
 
   // Se calculan una sola vez al llegar a game over, no en cada render.
   const exampleSolutions = useMemo(
