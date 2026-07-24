@@ -1049,6 +1049,18 @@ const EXTRA_WORDS = [
   "zosia","zosima","zosimo","zotico","zoé","zubair","zulaica","zulaima","zuleica","zuleika","zulema","zulima",
   "zully","zulma","zulmara","zulmira","zumara","zunila","zunilda","zuny","zuriel","zuza","zuzanny","zyon",
   "zysli","zíngara","zósimo","águeda","ángeles","áurea",
+  // Formas femeninas de profesiones (Tuttifrutalo), agregadas para que la
+  // lista deje de tener solo el masculino de cada oficio.
+  "agente inmobiliaria","asesora empresarial","asesora de imagen","analista financiera",
+  "animadora sociocultural","azafata de eventos","azafata de vuelo","cerrajera","carretillera",
+  "coordinadora de atención domiciliaria","desarrolladora web","diseñadora de modas",
+  "directora de restaurante","diseñadora de interiores","diseñadora 3d","diseñadora gráfica",
+  "editora de vídeo","fonoaudióloga","guía turística","imprentera","ingeniera civil",
+  "ingeniera industrial","ingeniera naval","ingeniera de sistemas","ingeniera de software",
+  "ingeniera electromecánica","ingeniera mecánica","jugadora profesional","mercadóloga",
+  "maquetadora","nutrióloga","organizadora de eventos","plomera","perita forense",
+  "reparadora de electrodomésticos","soldadora","trabajadora social","tanatopractora",
+  "tatuadora","auxiliar veterinaria",
 ];
 
 // Build Set and index once at module load
