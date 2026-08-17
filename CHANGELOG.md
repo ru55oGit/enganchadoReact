@@ -12,6 +12,9 @@ El formato está basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1
 ### Changed
 - AdSense: sacar el script del `index.html` (se cargaba en todo el sitio) y cargarlo solo desde Home y Privacidad (componente `AdsenseScript`) — nunca en `/game`, que es una pantalla de juego sin texto. Google rechazó el sitio por "anuncios servidos por Google en pantallas sin contenido del editor", justo ese caso
 
+### Fixed
+- Header: tocar el título (para volver a Home) seleccionaba el texto en mobile y disparaba el popup de "Buscar en Google" del navegador — agregar `userSelect: none`
+
 ## [2026-07-26]
 ### Added
 - SEO: agregar robots.txt y sitemap.xml (faltaban)
