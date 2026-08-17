@@ -7,6 +7,7 @@ import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import Layout from "../components/Layout";
 import LanguageSelector from "../components/LanguageSelector";
+import AdsenseScript from "../components/AdsenseScript";
 import { useLanguage } from "../i18n/LanguageContext";
 import { getBestChain, BestChain } from "../utils/gameStore";
 import { getDaysSinceLastPlayed } from "../utils/lastPlayedState";
@@ -51,6 +52,7 @@ export default function Home() {
 
   return (
     <Layout showFooter>
+      <AdsenseScript />
       {fromHub && (
         <Box
           component="a"
