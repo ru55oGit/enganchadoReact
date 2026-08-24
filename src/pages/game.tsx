@@ -7,6 +7,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Layout from "../components/Layout";
+import HowToPlayCollapse from "../components/HowToPlayCollapse";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import { useLanguage } from "../i18n/LanguageContext";
 import { getGameEngine, WordGameEngine } from "../utils/gameEngine";
@@ -351,6 +352,8 @@ export default function Game() {
             <Typography sx={{ color: timerColor, fontWeight: 900, fontSize: 22 }}>{state.timeLeft}</Typography>
           </Box>
         </Box>
+
+        <HowToPlayCollapse title={t.howToPlayTitle} body={t.howToPlayBody} />
 
         {/* Palabra actual + sílaba */}
         <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2.5, display: "flex", flexDirection: "column", alignItems: "center", gap: 1.5 }}>
