@@ -28,6 +28,8 @@ export interface Translation {
   whatIsBody: string;
   howToPlayTitle: string;
   howToPlayBody: string;
+  faqTitle: string;
+  faq: { q: string; a: string }[];
 
   // Game
   startingWordLabel: string;
@@ -83,6 +85,15 @@ const es: Translation = {
   whatIsBody: "Enganchalo es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?",
   howToPlayTitle: "¿Cómo jugar?",
   howToPlayBody: "Te damos una palabra de inicio. Usá su última sílaba para arrancar la siguiente, y así sucesivamente. Tenés 15 segundos por turno. No valen monosílabos ni palabras repetidas. Cuanto más larga la cadena y más rápido respondés, más puntos sumás.",
+  faqTitle: "Preguntas frecuentes",
+  faq: [
+    { q: "¿Enganchalo es gratis?", a: "Sí, jugar a Enganchalo es completamente gratis. La app se sostiene con publicidad, nunca vas a tener que pagar para jugar." },
+    { q: "¿Necesito crear una cuenta?", a: "No. Tu mejor racha se guarda en este dispositivo automáticamente, no hace falta registrarse ni iniciar sesión." },
+    { q: "¿Cómo se engancha una palabra con la siguiente?", a: "Tenés que empezar tu palabra con la última sílaba de la palabra anterior. No valen monosílabos ni palabras que ya usaste en esa cadena." },
+    { q: "¿Cuánto tiempo tengo para responder?", a: "15 segundos por turno. Si se acaba el tiempo o escribís una palabra inválida, se termina la partida." },
+    { q: "¿Cómo se calculan los puntos?", a: "Cuanto más larga se hace la cadena y más rápido respondés en cada turno, más puntos sumás." },
+    { q: "¿En qué idiomas puedo jugar?", a: "Enganchalo está disponible en español, inglés y portugués. Podés cambiar el idioma desde el selector de la parte de abajo de esta pantalla." },
+  ],
 
   startingWordLabel: "Palabra inicial",
   idleInstruction: "Tomá la última sílaba y enganchá la siguiente palabra",
@@ -135,6 +146,15 @@ const en: Translation = {
   whatIsBody: "Word Chain is a linked-word game. Take the last letter of the previous word and start a new one with it. How far can you get before time runs out?",
   howToPlayTitle: "How to play?",
   howToPlayBody: "We give you a starting word. Use its last letter to start the next one, and so on. You get 15 seconds per turn. No repeated words. The longer the chain and the faster you answer, the more points you score.",
+  faqTitle: "Frequently asked questions",
+  faq: [
+    { q: "Is Enganchalo free?", a: "Yes, playing Enganchalo is completely free. The app runs on ads, so you'll never have to pay to play." },
+    { q: "Do I need to create an account?", a: "No. Your best streak is saved automatically on this device — no sign-up or login required." },
+    { q: "How do I chain a word to the next one?", a: "Your word has to start with the last letter of the previous word. Repeated words within the same chain aren't allowed." },
+    { q: "How much time do I have to answer?", a: "15 seconds per turn. If time runs out or you type an invalid word, the game ends." },
+    { q: "How are points calculated?", a: "The longer the chain gets and the faster you answer each turn, the more points you score." },
+    { q: "What languages can I play in?", a: "Enganchalo is available in Spanish, English and Portuguese. You can switch languages from the selector at the bottom of this screen." },
+  ],
 
   startingWordLabel: "Starting word",
   idleInstruction: "Take the last letter and link the next word",
@@ -188,6 +208,15 @@ const pt: Translation = {
   whatIsBody: "Palavra Encadeada é um jogo de palavras em cadeia. Pegue a última letra da palavra anterior e comece uma nova com ela. Até onde você consegue chegar antes que o tempo acabe?",
   howToPlayTitle: "Como jogar?",
   howToPlayBody: "Damos uma palavra inicial. Use a última letra dela para começar a próxima, e assim por diante. Você tem 15 segundos por rodada. Sem palavras repetidas. Quanto mais longa a cadeia e mais rápido você responder, mais pontos você ganha.",
+  faqTitle: "Perguntas frequentes",
+  faq: [
+    { q: "O Enganchalo é grátis?", a: "Sim, jogar Enganchalo é totalmente grátis. O app se sustenta com publicidade, você nunca vai precisar pagar para jogar." },
+    { q: "Preciso criar uma conta?", a: "Não. Sua melhor sequência é salva automaticamente neste dispositivo, não precisa se cadastrar nem fazer login." },
+    { q: "Como eu encadeio uma palavra com a próxima?", a: "Sua palavra tem que começar com a última letra da palavra anterior. Não valem palavras repetidas dentro da mesma cadeia." },
+    { q: "Quanto tempo tenho para responder?", a: "15 segundos por rodada. Se o tempo acabar ou você digitar uma palavra inválida, a partida termina." },
+    { q: "Como são calculados os pontos?", a: "Quanto mais longa a cadeia e mais rápido você responder em cada rodada, mais pontos você ganha." },
+    { q: "Em quais idiomas posso jogar?", a: "O Enganchalo está disponível em espanhol, inglês e português. Você pode trocar o idioma no seletor na parte de baixo desta tela." },
+  ],
 
   startingWordLabel: "Palavra inicial",
   idleInstruction: "Pegue a última letra e encadeie a próxima palavra",
