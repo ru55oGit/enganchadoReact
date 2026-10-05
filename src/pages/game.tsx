@@ -89,6 +89,7 @@ export default function Game() {
   const { t, currentLanguage } = useLanguage();
   const engine = getGameEngine(currentLanguage);
   const [state, setState] = useState<GameState>(() => initGame(engine));
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   useEffect(() => {
     recordLastPlayed();
@@ -119,6 +120,7 @@ export default function Game() {
   }, [state.phase, currentLanguage]);
 
   function startGame() {
+    setKeyboardOpen(false);
     setState((p) =>
       p.phase === "idle"
         ? { ...p, phase: "playing", startedAt: Date.now() }
@@ -382,13 +384,16 @@ export default function Game() {
         </Box>
         
         {/* Input display (no native keyboard) */}
-        <Box sx={{
-          backgroundColor: "#fff", borderRadius: "10px",
-          border: `2px solid ${state.input ? ACCENT : "#d1d5db"}`,
-          minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
-          transition: "border-color 0.2s",
-          position: "relative",
-        }}>
+        <Box
+          onClick={() => setKeyboardOpen(true)}
+          sx={{
+            backgroundColor: "#fff", borderRadius: "10px",
+            border: `2px solid ${state.input ? ACCENT : "#d1d5db"}`,
+            minHeight: 60, display: "flex", alignItems: "center", justifyContent: "center",
+            transition: "border-color 0.2s",
+            position: "relative",
+            cursor: "pointer",
+          }}>
           <Typography sx={{
             fontSize: 18, fontWeight: 700, letterSpacing: 2, textTransform: "uppercase",
             color: state.input ? "#111" : "#bbb",
@@ -448,7 +453,7 @@ export default function Game() {
 
       </Box>
 
-      <VirtualKeyboard onKey={handleVirtualKey} lang={currentLanguage} />
+      <VirtualKeyboard onKey={handleVirtualKey} lang={currentLanguage} open={keyboardOpen} gameSlug="enganchalo" />
     </Layout>
   );
 }
