@@ -24,6 +24,8 @@ export interface Translation {
   wordsLabel: string;
   pointsLabel: string;
   dateLocale: string;
+  removeAdsButton: string;
+  removeAdsButtonBuying: string;
   whatIsTitle: string;
   whatIsBody: string;
   howToPlayTitle: string;
@@ -81,6 +83,8 @@ const es: Translation = {
   wordsLabel: "palabras",
   pointsLabel: "puntos",
   dateLocale: "es-AR",
+  removeAdsButton: "Sacar los anuncios",
+  removeAdsButtonBuying: "Redirigiendo a MercadoPago...",
   whatIsTitle: "¿Qué es Enganchalo?",
   whatIsBody: "Enganchalo es un juego de palabras encadenadas. Tomá la última sílaba de la palabra anterior y formá una nueva. ¿Hasta dónde podés llegar antes de que se acabe el tiempo?",
   howToPlayTitle: "¿Cómo jugar?",
@@ -142,6 +146,8 @@ const en: Translation = {
   wordsLabel: "words",
   pointsLabel: "points",
   dateLocale: "en-US",
+  removeAdsButton: "Remove ads",
+  removeAdsButtonBuying: "Redirecting to MercadoPago...",
   whatIsTitle: "What is Word Chain?",
   whatIsBody: "Word Chain is a linked-word game. Take the last letter of the previous word and start a new one with it. How far can you get before time runs out?",
   howToPlayTitle: "How to play?",
@@ -204,6 +210,8 @@ const pt: Translation = {
   wordsLabel: "palavras",
   pointsLabel: "pontos",
   dateLocale: "pt-BR",
+  removeAdsButton: "Remover anúncios",
+  removeAdsButtonBuying: "Redirecionando para o MercadoPago...",
   whatIsTitle: "O que é Palavra Encadeada?",
   whatIsBody: "Palavra Encadeada é um jogo de palavras em cadeia. Pegue a última letra da palavra anterior e comece uma nova com ela. Até onde você consegue chegar antes que o tempo acabe?",
   howToPlayTitle: "Como jogar?",
