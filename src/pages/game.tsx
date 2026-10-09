@@ -7,6 +7,7 @@ import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Layout from "../components/Layout";
+import HouseAdBanner from "../ads/HouseAdBanner";
 import HowToPlayCollapse from "../components/HowToPlayCollapse";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -259,6 +260,8 @@ export default function Game() {
           }}>
             {t.startButton}
           </Button>
+
+          <HouseAdBanner slot="enganchalo-config-banner" gameSlug="enganchalo" locale={currentLanguage} />
         </Box>
       </Layout>
     );
