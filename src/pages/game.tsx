@@ -168,13 +168,22 @@ export default function Game() {
       if (engine.isRejected(word)) return err(t.errorMonosyllable);
       if (p.usedWords.has(engine.normalize(word))) return err(t.errorAlreadyUsed);
 
+      const newUnit = engine.getChallengeUnit(word);
+      const newUsed = new Set(p.usedWords);
+      newUsed.add(engine.normalize(word));
+
+      // Palabras como "madrid" (drid) no tienen ninguna continuación
+      // posible en el diccionario — aceptarlas dejaría al jugador sin
+      // poder seguir la cadena. Se rechazan acá, antes de sumarlas, en vez
+      // de dejar que el jugador pierda por una trampa del diccionario.
+      if (engine.getExampleSolutions(newUnit, newUsed, 1).length === 0) {
+        return err(t.errorDeadEnd);
+      }
+
       playSuccessSound();
       const speedBonus = p.timeLeft >= 10 ? 5 : 0;
       const lengthBonus = Math.max(0, word.length - 4);
       const points = 10 + speedBonus + lengthBonus;
-      const newUnit = engine.getChallengeUnit(word);
-      const newUsed = new Set(p.usedWords);
-      newUsed.add(engine.normalize(word));
 
       return {
         ...p,

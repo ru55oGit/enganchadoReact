@@ -64,6 +64,7 @@ export interface Translation {
   errorNotInDictionary: string;
   errorMonosyllable: string;
   errorAlreadyUsed: string;
+  errorDeadEnd: string;
 }
 
 const es: Translation = {
@@ -133,6 +134,7 @@ const es: Translation = {
   errorNotInDictionary: "Esa palabra no existe en el diccionario.",
   errorMonosyllable: "No valen monosílabos.",
   errorAlreadyUsed: "Esa palabra ya fue usada.",
+  errorDeadEnd: "Esa palabra no tiene continuación posible, probá otra.",
 };
 
 const en: Translation = {
@@ -201,6 +203,7 @@ const en: Translation = {
   errorNotInDictionary: "That word isn't in the dictionary.",
   errorMonosyllable: "Single-syllable words aren't allowed.",
   errorAlreadyUsed: "That word was already used.",
+  errorDeadEnd: "That word has no possible continuation, try another.",
 };
 
 const pt: Translation = {
@@ -270,6 +273,7 @@ const pt: Translation = {
   errorNotInDictionary: "Essa palavra não existe no dicionário.",
   errorMonosyllable: "Palavras monossílabas não valem.",
   errorAlreadyUsed: "Essa palavra já foi usada.",
+  errorDeadEnd: "Essa palavra não tem continuação possível, tente outra.",
 };
 
 export const translations: Record<SupportedLanguage, Translation> = { es, en, pt };
