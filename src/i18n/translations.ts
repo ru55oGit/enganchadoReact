@@ -49,6 +49,10 @@ export interface Translation {
   noPossibleSolutions: string;
   playAgainButton: string;
   backToHomeButton: string;
+  watchVideoToContinueButton: string;
+  rewardedAdConfirmButton: string;
+  rewardedAdSkipButton: string;
+  rewardedAdWaitLabel: (seconds: number) => string;
   currentWordLabel: string;
   mustStartWithLabel: string;
   inputPlaceholder: (unit: string) => string;
@@ -115,6 +119,10 @@ const es: Translation = {
   noPossibleSolutions: "No tengo soluciones posibles en mi diccionario.",
   playAgainButton: "Jugar de nuevo",
   backToHomeButton: "Volver al inicio",
+  watchVideoToContinueButton: "Ver video para seguir jugando",
+  rewardedAdConfirmButton: "Reclamar recompensa",
+  rewardedAdSkipButton: "Cerrar",
+  rewardedAdWaitLabel: (seconds) => `Esperá ${seconds}s...`,
   currentWordLabel: "Palabra actual",
   mustStartWithLabel: "Tu palabra debe empezar con",
   inputPlaceholder: (unit) => `Empezá con ${unit}...`,
@@ -179,6 +187,10 @@ const en: Translation = {
   noPossibleSolutions: "I don't have any possible solutions in my dictionary.",
   playAgainButton: "Play again",
   backToHomeButton: "Back to home",
+  watchVideoToContinueButton: "Watch a video to keep playing",
+  rewardedAdConfirmButton: "Claim reward",
+  rewardedAdSkipButton: "Close",
+  rewardedAdWaitLabel: (seconds) => `Wait ${seconds}s...`,
   currentWordLabel: "Current word",
   mustStartWithLabel: "Your word must start with",
   inputPlaceholder: (unit) => `Start with ${unit}...`,
@@ -244,6 +256,10 @@ const pt: Translation = {
   noPossibleSolutions: "Não tenho soluções possíveis no meu dicionário.",
   playAgainButton: "Jogar de novo",
   backToHomeButton: "Voltar ao início",
+  watchVideoToContinueButton: "Assista a um vídeo para continuar jogando",
+  rewardedAdConfirmButton: "Resgatar recompensa",
+  rewardedAdSkipButton: "Fechar",
+  rewardedAdWaitLabel: (seconds) => `Espere ${seconds}s...`,
   currentWordLabel: "Palavra atual",
   mustStartWithLabel: "Sua palavra deve começar com",
   inputPlaceholder: (unit) => `Comece com ${unit}...`,

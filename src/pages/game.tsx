@@ -9,6 +9,8 @@ import FormControl from "@mui/material/FormControl";
 import Layout from "../components/Layout";
 import HouseAdBanner from "../ads/HouseAdBanner";
 import HowToPlayCollapse from "../components/HowToPlayCollapse";
+import { useRewardedAd } from "../ads/useRewardedAd";
+import RewardedAdModal from "../ads/RewardedAdModal";
 import VirtualKeyboard from "../components/VirtualKeyboard";
 import { useLanguage } from "../i18n/LanguageContext";
 import { getGameEngine, WordGameEngine } from "../utils/gameEngine";
@@ -31,6 +33,10 @@ interface GameState {
   errorMsg: string;
   input: string;
   startedAt: number | null;
+  // Se resetea a false en cada initGame — el botón "ver video para seguir
+  // jugando" solo se puede usar una vez por partida, independiente del
+  // cooldown general de useRewardedAd (que es por tiempo, no por partida).
+  rewardUsed: boolean;
 }
 
 function initGame(engine: WordGameEngine): GameState {
@@ -47,6 +53,7 @@ function initGame(engine: WordGameEngine): GameState {
     errorMsg: "",
     input: "",
     startedAt: null,
+    rewardUsed: false,
   };
 }
 
@@ -101,6 +108,15 @@ export default function Game() {
     () => (state.phase === "gameover" ? engine.getExampleSolutions(state.challengeUnit, state.usedWords, 3) : []),
     [state.phase]
   );
+
+  // Recompensa de rewarded ad desde game over: reanuda la misma cadena en
+  // vez de arrancar una partida nueva (initGame), sumando tiempo. Solo una
+  // vez por partida — el botón se saca de la pantalla con rewardUsed.
+  const resumeAfterReward = useCallback(() => {
+    setState((prev) => ({ ...prev, phase: "playing", timeLeft: TIMER_START, errorMsg: "", rewardUsed: true }));
+  }, []);
+
+  const rewardedAd = useRewardedAd("enganchalo-continue-rewarded", "enganchalo", currentLanguage, resumeAfterReward);
 
   // Timer
   useEffect(() => {
@@ -303,6 +319,25 @@ export default function Game() {
             </Box>
           </Box>
 
+          {!state.rewardUsed && (
+            <Button
+              onClick={rewardedAd.requestAd}
+              disabled={!rewardedAd.canShowAd}
+              variant="contained"
+              sx={{
+                backgroundColor: "#f0b429",
+                color: "#1a1a1a",
+                fontWeight: 800,
+                textTransform: "none",
+                borderRadius: 999,
+                py: 1.2,
+                "&:hover": { backgroundColor: "#d99f1a" },
+              }}
+            >
+              {rewardedAd.loadingAd ? "..." : t.watchVideoToContinueButton}
+            </Button>
+          )}
+
           <Box sx={{ borderRadius: "16px", backgroundColor: "#f3f3f3", p: 2 }}>
             <Typography sx={{ fontSize: 13, fontWeight: 700, color: "#888", mb: 1.5, textTransform: "uppercase", letterSpacing: 0.5 }}>
               {t.possibleSolutionsLabel}
@@ -334,6 +369,19 @@ export default function Game() {
             {t.backToHomeButton}
           </Button>
         </Box>
+
+        <RewardedAdModal
+          open={rewardedAd.showingAd}
+          adCreative={rewardedAd.adCreative}
+          canConfirmReward={rewardedAd.canConfirmReward}
+          secondsUntilCanConfirm={rewardedAd.secondsUntilCanConfirm}
+          onConfirm={rewardedAd.handleAdWatched}
+          onSkip={rewardedAd.handleAdSkipped}
+          onImageClick={rewardedAd.handleImageClick}
+          confirmLabel={t.rewardedAdConfirmButton}
+          skipLabel={t.rewardedAdSkipButton}
+          waitLabel={t.rewardedAdWaitLabel}
+        />
       </Layout>
     );
   }
