@@ -12,6 +12,7 @@ import { getBestChain, BestChain } from "../utils/gameStore";
 import { getDaysSinceLastPlayed } from "../utils/lastPlayedState";
 import { markFromHub, cameFromHubBefore } from "../utils/hubOriginState";
 import { isAdFree, purchaseAdFree, syncAdFreeAfterReturn } from "../ads/adFreeEntitlement";
+import HouseAdBanner from "../ads/HouseAdBanner";
 
 const ACCENT = "#e74c3c";
 const CARD_BG = "#eb6f62";
@@ -189,6 +190,15 @@ export default function Home() {
             </Box>
           </Box>
         </Box>
+
+        {!adFree && (
+          <HouseAdBanner
+            slot="enganchalo-home-double-banner"
+            gameSlug="enganchalo"
+            locale={currentLanguage}
+            format="banner_double"
+          />
+        )}
 
         {/* Mejor Racha */}
         {bestChain && bestChain.words.length > 1 && (
