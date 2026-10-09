@@ -332,6 +332,7 @@ export default function Game() {
                 borderRadius: 999,
                 py: 1.2,
                 "&:hover": { backgroundColor: "#d99f1a" },
+                "&.Mui-disabled": { backgroundColor: "rgba(240,180,41,0.35)", color: "rgba(26,26,26,0.5)" },
               }}
             >
               {rewardedAd.loadingAd ? "..." : t.watchVideoToContinueButton}
