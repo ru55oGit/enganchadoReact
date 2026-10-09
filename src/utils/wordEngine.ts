@@ -1,11 +1,21 @@
 import rawWords from "an-array-of-spanish-words";
 import { getBannedWords } from "./bannedWords";
 
+// Ñ no es una N con tilde — es su propia letra en español ("leña" ≠ "lena").
+// Pero en NFD se descompone en "n" + tilde combinante, así que sacar
+// diacríticos (para pelar los acentos reales: á→a, é→e...) de paso también
+// le comía la Ñ, haciendo que "ñata" normalizara igual que "nata" y el
+// juego las tratara como la misma palabra. Se la protege con un
+// placeholder antes de la descomposición y se restaura después.
+const NY_PLACEHOLDER = "\u0001";
+
 export function normalize(word: string): string {
   return word
+    .toLowerCase()
+    .replace(/ñ/g, NY_PLACEHOLDER)
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase()
+    .replace(new RegExp(NY_PLACEHOLDER, "g"), "ñ")
     .trim();
 }
 
