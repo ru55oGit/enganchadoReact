@@ -112,9 +112,42 @@ export default function Game() {
   // Recompensa de rewarded ad desde game over: reanuda la misma cadena en
   // vez de arrancar una partida nueva (initGame), sumando tiempo. Solo una
   // vez por partida — el botón se saca de la pantalla con rewardUsed.
+  //
+  // Si se perdió porque la última palabra no tenía ninguna continuación
+  // posible (ej. "madrid" → "drid"), seguir con esa misma palabra sería
+  // inútil — el jugador perdería de nuevo apenas se acabe el tiempo. En
+  // ese caso se banea la palabra (no se vuelve a ofrecer/aceptar en este
+  // dispositivo) y se reanuda desde la anterior de la cadena en vez de
+  // la trampa.
   const resumeAfterReward = useCallback(() => {
-    setState((prev) => ({ ...prev, phase: "playing", timeLeft: TIMER_START, errorMsg: "", rewardUsed: true }));
-  }, []);
+    setState((prev) => {
+      const isDeadEnd = engine.getExampleSolutions(prev.challengeUnit, prev.usedWords, 1).length === 0;
+
+      if (isDeadEnd && prev.chain.length > 1) {
+        const deadEndWord = prev.chain[prev.chain.length - 1];
+        engine.banWord(engine.normalize(deadEndWord));
+
+        const newChain = prev.chain.slice(0, -1);
+        const previousWord = newChain[newChain.length - 1];
+        const newUsed = new Set(prev.usedWords);
+        newUsed.delete(engine.normalize(deadEndWord));
+
+        return {
+          ...prev,
+          phase: "playing",
+          timeLeft: TIMER_START,
+          errorMsg: "",
+          rewardUsed: true,
+          chain: newChain,
+          currentWord: previousWord,
+          challengeUnit: engine.getChallengeUnit(previousWord.toLowerCase()),
+          usedWords: newUsed,
+        };
+      }
+
+      return { ...prev, phase: "playing", timeLeft: TIMER_START, errorMsg: "", rewardUsed: true };
+    });
+  }, [engine]);
 
   const rewardedAd = useRewardedAd("enganchalo-continue-rewarded", "enganchalo", currentLanguage, resumeAfterReward);
 
@@ -168,22 +201,13 @@ export default function Game() {
       if (engine.isRejected(word)) return err(t.errorMonosyllable);
       if (p.usedWords.has(engine.normalize(word))) return err(t.errorAlreadyUsed);
 
-      const newUnit = engine.getChallengeUnit(word);
-      const newUsed = new Set(p.usedWords);
-      newUsed.add(engine.normalize(word));
-
-      // Palabras como "madrid" (drid) no tienen ninguna continuación
-      // posible en el diccionario — aceptarlas dejaría al jugador sin
-      // poder seguir la cadena. Se rechazan acá, antes de sumarlas, en vez
-      // de dejar que el jugador pierda por una trampa del diccionario.
-      if (engine.getExampleSolutions(newUnit, newUsed, 1).length === 0) {
-        return err(t.errorDeadEnd);
-      }
-
       playSuccessSound();
       const speedBonus = p.timeLeft >= 10 ? 5 : 0;
       const lengthBonus = Math.max(0, word.length - 4);
       const points = 10 + speedBonus + lengthBonus;
+      const newUnit = engine.getChallengeUnit(word);
+      const newUsed = new Set(p.usedWords);
+      newUsed.add(engine.normalize(word));
 
       return {
         ...p,

@@ -1,4 +1,5 @@
 import rawWords from "an-array-of-spanish-words";
+import { getBannedWords } from "./bannedWords";
 
 export function normalize(word: string): string {
   return word
@@ -1292,8 +1293,14 @@ function getCandidates(syllable: string, usedWords: Set<string>): string[] {
   const normSyl = normalize(syllable);
   const key = normSyl.slice(0, 2);
   const candidates = wordIndex.get(key) ?? [];
+  const banned = getBannedWords();
   return candidates.filter(
-    (w) => getFirstSyllable(w) === normSyl && !usedWords.has(w) && !isMonosyllable(w) && w.length >= 3
+    (w) =>
+      getFirstSyllable(w) === normSyl &&
+      !usedWords.has(w) &&
+      !isMonosyllable(w) &&
+      w.length >= 3 &&
+      !banned.has(w)
   );
 }
 

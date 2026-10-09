@@ -27,6 +27,7 @@ import {
   wordStartsWithLetter as wordStartsWithLetterPt,
 } from "./wordEnginePt";
 import { SupportedLanguage } from "../i18n/translations";
+import { banWord } from "./bannedWords";
 
 // Unifies the Spanish (syllable-chain) and English (letter-chain) engines
 // behind one shape so game.tsx doesn't need to branch on language itself.
@@ -39,6 +40,11 @@ export interface WordGameEngine {
   isRejected(word: string): boolean;
   normalize(word: string): string;
   getExampleSolutions(unit: string, usedWords: Set<string>, count: number): string[];
+  // Solo tiene efecto real en español (getCandidates de wordEngine.ts la
+  // consulta) — en inglés/portugués, con cadenas por letra en vez de
+  // sílaba, una palabra sin ninguna continuación es prácticamente
+  // imposible, así que no hace falta que su getCandidates la chequee.
+  banWord(word: string): void;
 }
 
 const esEngine: WordGameEngine = {
@@ -50,6 +56,7 @@ const esEngine: WordGameEngine = {
   isRejected: isMonosyllable,
   normalize: normalizeEs,
   getExampleSolutions: getExampleSolutionsEs,
+  banWord,
 };
 
 const enEngine: WordGameEngine = {
@@ -62,6 +69,7 @@ const enEngine: WordGameEngine = {
   isRejected: () => false,
   normalize: normalizeEn,
   getExampleSolutions: getExampleSolutionsEn,
+  banWord,
 };
 
 const ptEngine: WordGameEngine = {
@@ -73,6 +81,7 @@ const ptEngine: WordGameEngine = {
   isRejected: () => false,
   normalize: normalizePt,
   getExampleSolutions: getExampleSolutionsPt,
+  banWord,
 };
 
 const engines: Record<SupportedLanguage, WordGameEngine> = {
