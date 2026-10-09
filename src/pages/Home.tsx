@@ -200,6 +200,19 @@ export default function Home() {
           />
         )}
 
+        {!adFree && (
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              size="small"
+              onClick={handleRemoveAds}
+              disabled={buyingAdFree}
+              sx={{ color: "rgba(255,255,255,0.7)", textTransform: "none", fontSize: 13 }}
+            >
+              {buyingAdFree ? t.removeAdsButtonBuying : t.removeAdsButton}
+            </Button>
+          </Box>
+        )}
+
         {/* Mejor Racha */}
         {bestChain && bestChain.words.length > 1 && (
           <Box sx={{ borderRadius: "16px", backgroundColor: "#fff", p: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
@@ -239,16 +252,12 @@ export default function Home() {
         )}
 
         {!adFree && (
-          <Box sx={{ display: "flex", justifyContent: "center" }}>
-            <Button
-              size="small"
-              onClick={handleRemoveAds}
-              disabled={buyingAdFree}
-              sx={{ color: "rgba(255,255,255,0.7)", textTransform: "none", fontSize: 13 }}
-            >
-              {buyingAdFree ? t.removeAdsButtonBuying : t.removeAdsButton}
-            </Button>
-          </Box>
+          <HouseAdBanner
+            slot="enganchalo-home-double-banner-2"
+            gameSlug="enganchalo"
+            locale={currentLanguage}
+            format="banner_double"
+          />
         )}
 
         {/* Qué es */}
