@@ -214,42 +214,46 @@ export default function Home() {
         )}
 
         {/* Mejor Racha */}
-        {bestChain && bestChain.words.length > 1 && (
-          <Box sx={{ borderRadius: "16px", backgroundColor: "#fff", p: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
-            <Typography sx={{ fontSize: 28, fontWeight: 800, color: "#222", mb: 0.5 }}>
-              {t.bestStreakTitle}
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: "#888", mb: 2 }}>
-              {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel}
-              {bestChain.timeUsedSec != null && ` · ${formatTime(bestChain.timeUsedSec)} min`} ·{" "}
-              {(() => {
-                const [y, m, d] = bestChain.date.split("-").map(Number);
-                return new Date(y, m - 1, d).toLocaleDateString(t.dateLocale, {
-                  weekday: "long", day: "numeric", month: "long",
-                });
-              })()}
-            </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75 }}>
-              {bestChain.words.map((word, i) => (
-                <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                  <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 16, visibility: i === 0 ? "hidden" : "visible" }}>→</Typography>
-                  <Box sx={{
-                    px: 1.5, py: 0.5, borderRadius: "6px",
-                    backgroundColor: i === 0 ? "#e5e7eb" : `${ACCENT}18`,
-                    border: `1px solid ${i === 0 ? "#d1d5db" : ACCENT + "55"}`,
-                  }}>
-                    <Typography sx={{
-                      color: i === 0 ? "#6b7280" : ACCENT,
-                      fontFamily: "monospace", fontSize: 13, fontWeight: 700,
+        <Box sx={{ borderRadius: "16px", backgroundColor: "#fff", p: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.08)" }}>
+          <Typography sx={{ fontSize: 28, fontWeight: 800, color: "#222", mb: 0.5 }}>
+            {t.bestStreakTitle}
+          </Typography>
+          {bestChain && bestChain.words.length > 1 ? (
+            <>
+              <Typography sx={{ fontSize: 13, color: "#888", mb: 2 }}>
+                {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel}
+                {bestChain.timeUsedSec != null && ` · ${formatTime(bestChain.timeUsedSec)} min`} ·{" "}
+                {(() => {
+                  const [y, m, d] = bestChain.date.split("-").map(Number);
+                  return new Date(y, m - 1, d).toLocaleDateString(t.dateLocale, {
+                    weekday: "long", day: "numeric", month: "long",
+                  });
+                })()}
+              </Typography>
+              <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75 }}>
+                {bestChain.words.map((word, i) => (
+                  <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
+                    <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 16, visibility: i === 0 ? "hidden" : "visible" }}>→</Typography>
+                    <Box sx={{
+                      px: 1.5, py: 0.5, borderRadius: "6px",
+                      backgroundColor: i === 0 ? "#e5e7eb" : `${ACCENT}18`,
+                      border: `1px solid ${i === 0 ? "#d1d5db" : ACCENT + "55"}`,
                     }}>
-                      {word.toUpperCase()}
-                    </Typography>
+                      <Typography sx={{
+                        color: i === 0 ? "#6b7280" : ACCENT,
+                        fontFamily: "monospace", fontSize: 13, fontWeight: 700,
+                      }}>
+                        {word.toUpperCase()}
+                      </Typography>
+                    </Box>
                   </Box>
-                </Box>
-              ))}
-            </Box>
-          </Box>
-        )}
+                ))}
+              </Box>
+            </>
+          ) : (
+            <Typography sx={{ fontSize: 13, color: "#888" }}>{t.bestStreakEmptyBody}</Typography>
+          )}
+        </Box>
 
         {!adFree && (
           <HouseAdBanner

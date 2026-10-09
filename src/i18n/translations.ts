@@ -21,6 +21,7 @@ export interface Translation {
   freeModeLabel: string;
   freeModeSub: string;
   bestStreakTitle: string;
+  bestStreakEmptyBody: string;
   wordsLabel: string;
   pointsLabel: string;
   dateLocale: string;
@@ -80,6 +81,7 @@ const es: Translation = {
   freeModeLabel: "MODO LIBRE",
   freeModeSub: "¡A ver cuánto llegás!",
   bestStreakTitle: "Mejor Racha",
+  bestStreakEmptyBody: "Todavía no jugaste ninguna partida.",
   wordsLabel: "palabras",
   pointsLabel: "puntos",
   dateLocale: "es-AR",
@@ -143,6 +145,7 @@ const en: Translation = {
   freeModeLabel: "FREE MODE",
   freeModeSub: "See how far you can go!",
   bestStreakTitle: "Best Streak",
+  bestStreakEmptyBody: "You haven't played any games yet.",
   wordsLabel: "words",
   pointsLabel: "points",
   dateLocale: "en-US",
@@ -207,6 +210,7 @@ const pt: Translation = {
   freeModeLabel: "MODO LIVRE",
   freeModeSub: "Veja até onde você chega!",
   bestStreakTitle: "Melhor Sequência",
+  bestStreakEmptyBody: "Você ainda não jogou nenhuma partida.",
   wordsLabel: "palavras",
   pointsLabel: "pontos",
   dateLocale: "pt-BR",
