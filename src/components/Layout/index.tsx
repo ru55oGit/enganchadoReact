@@ -124,7 +124,7 @@ const Layout: React.FC<LayoutProps> = ({ children, onBack, showFooter = false })
               cursor: "pointer", zIndex: 2, width: "max-content",
               userSelect: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none",
             }} onClick={() => window.location.replace("/")}>
-              {t.appName}
+              Boludeando
             </Box>
           </Box>
         )}
