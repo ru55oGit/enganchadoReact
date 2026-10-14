@@ -1,4 +1,4 @@
-import rawWords from "an-array-of-portuguese-words";
+import { PT_WORDS_FILTERED } from "./ptWordsFiltered";
 
 // A diferencia del inglés, el diccionario portugués sí trae acentos/cedilla
 // (café, ação, coração...). Los sacamos igual que en español para no
@@ -11,9 +11,7 @@ export function normalize(word: string): string {
     .trim();
 }
 
-const wordSet = new Set<string>(
-  (rawWords as unknown as string[]).filter((w) => w.length >= 3).map(normalize)
-);
+const wordSet = new Set<string>(PT_WORDS_FILTERED.filter((w) => w.length >= 3).map(normalize));
 
 // Index by first letter, used to look up example solutions quickly.
 const wordIndex = new Map<string, string[]>();
