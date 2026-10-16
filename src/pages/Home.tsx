@@ -8,6 +8,7 @@ import Layout from "../components/Layout";
 import LanguageSelector from "../components/LanguageSelector";
 import AdsenseScript from "../components/AdsenseScript";
 import { useLanguage } from "../i18n/LanguageContext";
+import { track } from "../lib/analytics";
 import { getBestChain, BestChain } from "../utils/gameStore";
 import { getDaysSinceLastPlayed } from "../utils/lastPlayedState";
 import { markFromHub, cameFromHubBefore } from "../utils/hubOriginState";
@@ -25,7 +26,13 @@ function formatTime(totalSeconds: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-const HUB_URL = "https://www.boludeando.com/";
+// UTM: distingue en GA4 del hub cuánto tráfico de "volver" viene
+// específicamente del header de este juego.
+const HUB_URL = "https://www.boludeando.com/?utm_source=enganchalo&utm_medium=cross_game&utm_campaign=header_back";
+
+function handleHubLinkClick() {
+  track("select_content", { content_type: "cross_game", item_id: "boludeando_hub" });
+}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -110,7 +117,7 @@ export default function Home() {
             boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
             width: { xs: "100%", md: "480px" }, position: "relative",
           }}>
-            <Box component="a" href={HUB_URL} aria-label="Volver" sx={{ display: "flex", alignItems: "center", zIndex: 1 }}>
+            <Box component="a" href={HUB_URL} onClick={handleHubLinkClick} aria-label="Volver" sx={{ display: "flex", alignItems: "center", zIndex: 1 }}>
               <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
                 <path d="M26 6L14 19L26 32" stroke={ACCENT} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -118,6 +125,7 @@ export default function Home() {
             <Box
               component="a"
               href={HUB_URL}
+              onClick={handleHubLinkClick}
               sx={{
                 position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
                 fontFamily: "Lobster, cursive", fontSize: 28, color: ACCENT, textDecoration: "none",

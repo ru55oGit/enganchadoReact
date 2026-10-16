@@ -16,6 +16,7 @@ import { useLanguage } from "../i18n/LanguageContext";
 import { getGameEngine, WordGameEngine } from "../utils/gameEngine";
 import { maybeSaveBestChain } from "../utils/gameStore";
 import { recordLastPlayed } from "../utils/lastPlayedState";
+import { track } from "../lib/analytics";
 
 const ACCENT = "#e74c3c";
 const TIMER_START = 15;
@@ -161,6 +162,14 @@ export default function Game() {
           clearInterval(id);
           const timeUsedSec = prev.startedAt ? Math.round((Date.now() - prev.startedAt) / 1000) : 0;
           maybeSaveBestChain(currentLanguage, prev.chain, prev.score, timeUsedSec);
+          // "timeout" es la única causa real de game over acá: se acaba el
+          // tiempo para la palabra actual.
+          track("game_over", {
+            score: prev.score,
+            duration_sec: timeUsedSec,
+            words_found: prev.chain.length - 1,
+            reason: "timeout",
+          });
           return { ...prev, phase: "gameover", timeLeft: 0 };
         }
         return { ...prev, timeLeft: prev.timeLeft - 1 };
@@ -171,6 +180,7 @@ export default function Game() {
 
   function startGame() {
     setKeyboardOpen(false);
+    track("game_start", {});
     setState((p) =>
       p.phase === "idle"
         ? { ...p, phase: "playing", startedAt: Date.now() }
