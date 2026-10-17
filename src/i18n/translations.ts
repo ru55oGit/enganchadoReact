@@ -45,6 +45,7 @@ export interface Translation {
   scoreLabel: string;
   chainOfWords: (n: number) => string;
   yourChainLabel: string;
+  shareResultText: (words: number, score: number) => string;
   possibleSolutionsLabel: string;
   noPossibleSolutions: string;
   playAgainButton: string;
@@ -116,6 +117,7 @@ const es: Translation = {
   scoreLabel: "Puntaje",
   chainOfWords: (n) => `Cadena de ${n} palabras`,
   yourChainLabel: "Tu cadena",
+  shareResultText: (words, score) => `¡Jugué Enganchalo! Armé una cadena de ${words} palabras y saqué ${score} puntos 🔗`,
   possibleSolutionsLabel: "Posibles Soluciones",
   noPossibleSolutions: "No tengo soluciones posibles en mi diccionario.",
   playAgainButton: "Jugar de nuevo",
@@ -185,6 +187,7 @@ const en: Translation = {
   scoreLabel: "Score",
   chainOfWords: (n) => `Chain of ${n} word${n === 1 ? "" : "s"}`,
   yourChainLabel: "Your chain",
+  shareResultText: (words, score) => `I played Enganchalo! Built a chain of ${words} words and scored ${score} points 🔗`,
   possibleSolutionsLabel: "Possible Solutions",
   noPossibleSolutions: "I don't have any possible solutions in my dictionary.",
   playAgainButton: "Play again",
@@ -255,6 +258,7 @@ const pt: Translation = {
   scoreLabel: "Pontuação",
   chainOfWords: (n) => `Cadeia de ${n} palavra${n === 1 ? "" : "s"}`,
   yourChainLabel: "Sua cadeia",
+  shareResultText: (words, score) => `Joguei Enganchalo! Montei uma cadeia de ${words} palavras e fiz ${score} pontos 🔗`,
   possibleSolutionsLabel: "Soluções Possíveis",
   noPossibleSolutions: "Não tenho soluções possíveis no meu dicionário.",
   playAgainButton: "Jogar de novo",
