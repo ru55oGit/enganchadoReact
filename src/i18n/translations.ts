@@ -46,6 +46,7 @@ export interface Translation {
   chainOfWords: (n: number) => string;
   yourChainLabel: string;
   shareResultText: (words: number, score: number) => string;
+  sharePointsLabel: (score: number) => string;
   possibleSolutionsLabel: string;
   noPossibleSolutions: string;
   playAgainButton: string;
@@ -118,11 +119,12 @@ const es: Translation = {
   chainOfWords: (n) => `Cadena de ${n} palabras`,
   yourChainLabel: "Tu cadena",
   shareResultText: (words, score) => `¡Jugué Enganchalo! Armé una cadena de ${words} palabras y saqué ${score} puntos 🔗`,
+  sharePointsLabel: (score) => `${score} puntos`,
   possibleSolutionsLabel: "Posibles Soluciones",
   noPossibleSolutions: "No tengo soluciones posibles en mi diccionario.",
   playAgainButton: "Jugar de nuevo",
   backToHomeButton: "Volver al inicio",
-  watchVideoToContinueButton: "Ver video para seguir jugando",
+  watchVideoToContinueButton: "Ver un anuncio para seguir jugando",
   rewardedAdConfirmButton: "Reclamar recompensa",
   rewardedAdSkipButton: "Cerrar",
   rewardedAdWaitLabel: (seconds) => `Esperá ${seconds}s...`,
@@ -188,11 +190,12 @@ const en: Translation = {
   chainOfWords: (n) => `Chain of ${n} word${n === 1 ? "" : "s"}`,
   yourChainLabel: "Your chain",
   shareResultText: (words, score) => `I played Enganchalo! Built a chain of ${words} words and scored ${score} points 🔗`,
+  sharePointsLabel: (score) => `${score} points`,
   possibleSolutionsLabel: "Possible Solutions",
   noPossibleSolutions: "I don't have any possible solutions in my dictionary.",
   playAgainButton: "Play again",
   backToHomeButton: "Back to home",
-  watchVideoToContinueButton: "Watch a video to keep playing",
+  watchVideoToContinueButton: "Watch an ad to keep playing",
   rewardedAdConfirmButton: "Claim reward",
   rewardedAdSkipButton: "Close",
   rewardedAdWaitLabel: (seconds) => `Wait ${seconds}s...`,
@@ -259,11 +262,12 @@ const pt: Translation = {
   chainOfWords: (n) => `Cadeia de ${n} palavra${n === 1 ? "" : "s"}`,
   yourChainLabel: "Sua cadeia",
   shareResultText: (words, score) => `Joguei Enganchalo! Montei uma cadeia de ${words} palavras e fiz ${score} pontos 🔗`,
+  sharePointsLabel: (score) => `${score} pontos`,
   possibleSolutionsLabel: "Soluções Possíveis",
   noPossibleSolutions: "Não tenho soluções possíveis no meu dicionário.",
   playAgainButton: "Jogar de novo",
   backToHomeButton: "Voltar ao início",
-  watchVideoToContinueButton: "Assista a um vídeo para continuar jogando",
+  watchVideoToContinueButton: "Assista a um anúncio para continuar jogando",
   rewardedAdConfirmButton: "Resgatar recompensa",
   rewardedAdSkipButton: "Fechar",
   rewardedAdWaitLabel: (seconds) => `Espere ${seconds}s...`,

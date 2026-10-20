@@ -335,7 +335,16 @@ export default function Game() {
     setSharingResult(true);
     track("share", { method });
     try {
-      const imageFile = await buildEnganchadoResultPngFile(state.chain, state.score, "enganchalo-resultado.png");
+      const wordsCount = Math.max(state.chain.length - 1, 0);
+      const imageFile = await buildEnganchadoResultPngFile(
+        state.chain,
+        {
+          chainTitle: t.chainOfWords(wordsCount),
+          pointsLabel: t.sharePointsLabel(state.score),
+          chainSectionLabel: t.yourChainLabel.toUpperCase(),
+        },
+        "enganchalo-resultado.png",
+      );
       const shareUrl = "https://www.enganchalo.com";
       const shareData: ShareData = {
         title: "Enganchalo",

@@ -23,11 +23,26 @@ function roundRectPath(
   ctx.closePath();
 }
 
+// Mismo degradé que el fondo de toda la app (ver Layout/index.tsx), no un
+// color aparte inventado para esta imagen.
+const BG_GRADIENT_FROM = "#a34747";
+const BG_GRADIENT_TO = "#F44336";
+const COLOR_WHITE = "#ffffff";
+const COLOR_MUTED = "rgba(255, 255, 255, 0.65)";
 const ACCENT = "#e74c3c";
+const CARD_LABEL_COLOR = "#888888";
+
+// Textos ya formateados/traducidos por el caller (t.chainOfWords, etc.) —
+// esta función no sabe de idiomas, solo dibuja.
+export interface EnganchadoShareLabels {
+  chainTitle: string; // ej "Cadena de 25 palabras"
+  pointsLabel: string; // ej "359 puntos"
+  chainSectionLabel: string; // ej "TU CADENA"
+}
 
 export async function buildEnganchadoResultPngFile(
   chain: string[],
-  score: number,
+  labels: EnganchadoShareLabels,
   filename: string,
 ): Promise<File | null> {
   const width = 560;
@@ -35,7 +50,7 @@ export async function buildEnganchadoResultPngFile(
   const chipHeight = 34;
   const chipGapX = 8;
   const chipGapY = 8;
-  const headerHeight = 168;
+  const headerHeight = 196;
 
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
@@ -67,42 +82,56 @@ export async function buildEnganchadoResultPngFile(
   if (currentRow.length > 0) rows.push(currentRow);
 
   const rowsHeight = Math.max(rows.length, 1) * (chipHeight + chipGapY);
-  const height = headerHeight + rowsHeight + padding;
+  // Card blanca detrás de la lista de palabras (label + chips), para que no
+  // se pierdan contra el degradé rojo de fondo — mismo criterio que
+  // letrisReact.
+  const cardInset = 16;
+  const cardTop = headerHeight - 40;
+  const cardBottom = headerHeight + rowsHeight + 16;
+  const height = cardBottom + 20;
 
   canvas.width = width;
   canvas.height = height;
 
-  // Tarjeta blanca redondeada, igual que el resto del hub.
-  ctx.fillStyle = "#ffffff";
+  // Tarjeta: la imagen entera es la tarjeta (bordes redondeados + fondo en
+  // degradé de marca, reemplaza el blanco plano de antes).
+  const gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, BG_GRADIENT_FROM);
+  gradient.addColorStop(1, BG_GRADIENT_TO);
+  ctx.fillStyle = gradient;
   roundRectPath(ctx, 0, 0, width, height, 28);
   ctx.fill();
 
-  // Título de marca.
-  ctx.fillStyle = ACCENT;
-  ctx.font = "bold 30px sans-serif";
+  // Título de marca, más grande.
+  ctx.fillStyle = COLOR_WHITE;
+  ctx.font = "bold 40px sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("www.enganchalo.com", width / 2, 44);
+  ctx.fillText("www.enganchalo.com", width / 2, 50);
 
-  // Cadena de N palabras + puntaje.
-  const wordsCount = Math.max(chain.length - 1, 0);
-  ctx.fillStyle = "#222222";
+  // Cadena de N palabras + puntaje, centrados.
+  ctx.fillStyle = COLOR_WHITE;
   ctx.font = "bold 22px sans-serif";
-  ctx.fillText(`Cadena de ${wordsCount} palabras`, width / 2, 86);
+  ctx.fillText(labels.chainTitle, width / 2, 98);
 
-  ctx.fillStyle = "#666666";
-  ctx.font = "600 16px sans-serif";
-  ctx.fillText(`${score} puntos`, width / 2, 116);
+  ctx.fillStyle = COLOR_MUTED;
+  ctx.font = "bold 12px sans-serif";
+  ctx.fillText(labels.pointsLabel.toUpperCase(), width / 2, 130);
+
+  // Card blanca detrás de la lista.
+  ctx.fillStyle = COLOR_WHITE;
+  roundRectPath(ctx, cardInset, cardTop, width - cardInset * 2, cardBottom - cardTop, 16);
+  ctx.fill();
 
   // Etiqueta de la lista.
-  ctx.fillStyle = "#888888";
+  ctx.fillStyle = CARD_LABEL_COLOR;
   ctx.font = "bold 12px sans-serif";
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
-  ctx.fillText("TU CADENA", padding, 148);
+  ctx.fillText(labels.chainSectionLabel, padding, 176);
 
-  // Chips de la cadena, en filas (igual estética que la card de game over):
-  // la primera palabra (punto de partida) en gris, el resto en rojo acento.
+  // Chips de la cadena, en filas: la primera palabra (punto de partida) en
+  // gris, el resto en rojo acento.
   ctx.font = "bold 14px monospace";
   ctx.textAlign = "left";
   ctx.textBaseline = "middle";
