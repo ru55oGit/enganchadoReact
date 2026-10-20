@@ -47,6 +47,7 @@ export interface Translation {
   yourChainLabel: string;
   shareResultText: (words: number, score: number) => string;
   sharePointsLabel: (score: number) => string;
+  shareRecordText: (words: number, score: number) => string;
   possibleSolutionsLabel: string;
   noPossibleSolutions: string;
   playAgainButton: string;
@@ -120,6 +121,7 @@ const es: Translation = {
   yourChainLabel: "Tu cadena",
   shareResultText: (words, score) => `¡Jugué Enganchalo! Armé una cadena de ${words} palabras y saqué ${score} puntos 🔗`,
   sharePointsLabel: (score) => `${score} puntos`,
+  shareRecordText: (words, score) => `¡Mi mejor racha en Enganchalo es de ${words} palabras y ${score} puntos! ¿Podés superarla? 🔗`,
   possibleSolutionsLabel: "Posibles Soluciones",
   noPossibleSolutions: "No tengo soluciones posibles en mi diccionario.",
   playAgainButton: "Jugar de nuevo",
@@ -191,6 +193,7 @@ const en: Translation = {
   yourChainLabel: "Your chain",
   shareResultText: (words, score) => `I played Enganchalo! Built a chain of ${words} words and scored ${score} points 🔗`,
   sharePointsLabel: (score) => `${score} points`,
+  shareRecordText: (words, score) => `My best streak in Enganchalo is ${words} words and ${score} points! Can you beat it? 🔗`,
   possibleSolutionsLabel: "Possible Solutions",
   noPossibleSolutions: "I don't have any possible solutions in my dictionary.",
   playAgainButton: "Play again",
@@ -263,6 +266,7 @@ const pt: Translation = {
   yourChainLabel: "Sua cadeia",
   shareResultText: (words, score) => `Joguei Enganchalo! Montei uma cadeia de ${words} palavras e fiz ${score} pontos 🔗`,
   sharePointsLabel: (score) => `${score} pontos`,
+  shareRecordText: (words, score) => `Minha melhor sequência no Enganchalo é de ${words} palavras e ${score} pontos! Consegue superar? 🔗`,
   possibleSolutionsLabel: "Soluções Possíveis",
   noPossibleSolutions: "Não tenho soluções possíveis no meu dicionário.",
   playAgainButton: "Jogar de novo",
