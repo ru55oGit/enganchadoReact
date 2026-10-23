@@ -26,8 +26,8 @@ function formatTime(totalSeconds: number): string {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
-// UTM: distingue en GA4 del hub cuánto tráfico de "volver" viene
-// específicamente del header de este juego.
+// UTM: distingue en GA4 del hub cuÃ¡nto trÃ¡fico de "volver" viene
+// especÃ­ficamente del header de este juego.
 const HUB_URL = "https://www.boludeando.com/?utm_source=enganchalo&utm_medium=cross_game&utm_campaign=header_back";
 
 function handleHubLinkClick() {
@@ -38,6 +38,10 @@ export default function Home() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t, currentLanguage } = useLanguage();
+  // El idioma viaja hub→juego por query param al entrar; esto lo hace
+  // viajar también juego→hub al volver, para que no se pierda si el
+  // usuario lo cambió acá adentro.
+  const hubUrlWithLang = `${HUB_URL}&lang=${currentLanguage}`;
 
   const [adFree, setAdFree] = useState(false);
   const [buyingAdFree, setBuyingAdFree] = useState(false);
@@ -103,7 +107,7 @@ export default function Home() {
         bestChain.words,
         {
           chainTitle: t.bestStreakTitle,
-          pointsLabel: summaryParts.join(" · "),
+          pointsLabel: summaryParts.join(" Â· "),
           chainSectionLabel: t.yourChainLabel.toUpperCase(),
         },
         "enganchalo-record.png",
@@ -118,7 +122,7 @@ export default function Home() {
       }
       await navigator.share(shareData);
     } catch {
-      // Canceló el panel de compartir sin elegir nada.
+      // CancelÃ³ el panel de compartir sin elegir nada.
     } finally {
       setSharingRecord(false);
     }
@@ -138,14 +142,14 @@ export default function Home() {
       <AdsenseScript />
       {
         // Shell fijo a todo el ancho del viewport (sin estilo propio) que
-        // centra con flexbox el header real de 480px adentro — más robusto
+        // centra con flexbox el header real de 480px adentro â mÃ¡s robusto
         // que left:50%+transform. boxSizing:border-box en el header es
         // necesario para que el px:2 (padding) no se sume por fuera del
         // width:480px (encontrado en emojinaloReact: sin esto el header
-        // termina ~32px más ancho que la columna de contenido). Siempre
+        // termina ~32px mÃ¡s ancho que la columna de contenido). Siempre
         // visible (no solo viniendo del hub): con los shares de resultado,
         // alguien puede entrar directo a este juego sin haber pasado por
-        // boludeando.com antes, y necesita igual una forma de llegar ahí.
+        // boludeando.com antes, y necesita igual una forma de llegar ahÃ­.
       }
       <Box sx={{ position: "fixed", top: 0, left: 0, width: "100%", zIndex: 10, display: "flex", justifyContent: "center" }}>
         <Box component="header" sx={{
@@ -157,14 +161,14 @@ export default function Home() {
           boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
           width: { xs: "100%", md: "480px" }, position: "relative",
         }}>
-          <Box component="a" href={HUB_URL} onClick={handleHubLinkClick} aria-label="Volver" sx={{ display: "flex", alignItems: "center", zIndex: 1 }}>
+          <Box component="a" href={hubUrlWithLang} onClick={handleHubLinkClick} aria-label="Volver" sx={{ display: "flex", alignItems: "center", zIndex: 1 }}>
             <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
               <path d="M26 6L14 19L26 32" stroke={ACCENT} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Box>
           <Box
             component="a"
-            href={HUB_URL}
+            href={hubUrlWithLang}
             onClick={handleHubLinkClick}
             sx={{
               position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)",
@@ -216,7 +220,7 @@ export default function Home() {
               {CHAIN.map((word, i) => (
                 <Box key={word} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                   {i > 0 && (
-                    <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 18 }}>→</Typography>
+                    <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 18 }}>â</Typography>
                   )}
                   <Box sx={{
                     px: 2, py: 1, borderRadius: "8px",
@@ -289,8 +293,8 @@ export default function Home() {
           {bestChain && bestChain.words.length > 1 ? (
             <>
               <Typography sx={{ fontSize: 13, color: "#888", mb: 2 }}>
-                {bestChain.words.length - 1} {t.wordsLabel} · {bestChain.score} {t.pointsLabel}
-                {bestChain.timeUsedSec != null && ` · ${formatTime(bestChain.timeUsedSec)} min`} ·{" "}
+                {bestChain.words.length - 1} {t.wordsLabel} Â· {bestChain.score} {t.pointsLabel}
+                {bestChain.timeUsedSec != null && ` Â· ${formatTime(bestChain.timeUsedSec)} min`} Â·{" "}
                 {(() => {
                   const [y, m, d] = bestChain.date.split("-").map(Number);
                   return new Date(y, m - 1, d).toLocaleDateString(t.dateLocale, {
@@ -301,7 +305,7 @@ export default function Home() {
               <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 0.75 }}>
                 {bestChain.words.map((word, i) => (
                   <Box key={i} sx={{ display: "flex", alignItems: "center", gap: 0.75 }}>
-                    <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 16, visibility: i === 0 ? "hidden" : "visible" }}>→</Typography>
+                    <Typography sx={{ color: ACCENT, fontWeight: 900, fontSize: 16, visibility: i === 0 ? "hidden" : "visible" }}>â</Typography>
                     <Box sx={{
                       px: 1.5, py: 0.5, borderRadius: "6px",
                       backgroundColor: i === 0 ? "#e5e7eb" : `${ACCENT}18`,
@@ -367,7 +371,7 @@ export default function Home() {
           />
         )}
 
-        {/* Qué es */}
+        {/* QuÃ© es */}
         <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
             {t.whatIsTitle}
@@ -377,7 +381,7 @@ export default function Home() {
           </Typography>
         </Box>
 
-        {/* Cómo jugar */}
+        {/* CÃ³mo jugar */}
         <Box component="section" sx={{ backgroundColor: "rgba(0,0,0,0.18)", borderRadius: "24px", px: 2, py: 2.5 }}>
           <Typography variant="h5" sx={{ fontWeight: 800, color: "#fff", mb: 1 }}>
             {t.howToPlayTitle}
@@ -402,10 +406,10 @@ export default function Home() {
           </Box>
         </Box>
 
-        {/* Banner fijo "anunciá acá" — no es un ad_slot real, nunca se
-            reemplaza por una campaña comprada. Siempre hay un lugar visible
+        {/* Banner fijo "anunciÃ¡ acÃ¡" â no es un ad_slot real, nunca se
+            reemplaza por una campaÃ±a comprada. Siempre hay un lugar visible
             para que alguien descubra que puede anunciar, incluso si todos
-            los slots de verdad ya están vendidos. Reemplazado por el banner
+            los slots de verdad ya estÃ¡n vendidos. Reemplazado por el banner
             doble del hub (3 precios + URLs rotando) el 2026-10-10. */}
         {!adFree && (
           <>
