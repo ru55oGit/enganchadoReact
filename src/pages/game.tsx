@@ -100,6 +100,9 @@ export default function Game() {
   const engine = getGameEngine(currentLanguage);
   const [state, setState] = useState<GameState>(() => initGame(engine));
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(() => {
+    return localStorage.getItem("enganchalo_sound_enabled") !== "false";
+  });
   const [sharingResult, setSharingResult] = useState(false);
   const canShareResult = typeof navigator !== "undefined" && typeof navigator.share === "function";
 
@@ -205,7 +208,7 @@ export default function Game() {
   const submitWord = useCallback(() => {
     setState((p) => {
       const word = p.input.trim().toLowerCase();
-      const err = (msg: string) => { playErrorSound(); return { ...p, errorMsg: msg }; };
+      const err = (msg: string) => { if (soundEnabled) playErrorSound(); return { ...p, errorMsg: msg }; };
 
       if (word.length < 3) return err(t.errorTooShort);
       if (!engine.unitMatchesWord(word, p.challengeUnit))
@@ -214,7 +217,7 @@ export default function Game() {
       if (engine.isRejected(word)) return err(t.errorMonosyllable);
       if (p.usedWords.has(engine.normalize(word))) return err(t.errorAlreadyUsed);
 
-      playSuccessSound();
+      if (soundEnabled) playSuccessSound();
       const speedBonus = p.timeLeft >= 10 ? 5 : 0;
       const lengthBonus = Math.max(0, word.length - 4);
       const points = 10 + speedBonus + lengthBonus;
@@ -234,7 +237,7 @@ export default function Game() {
         input: "",
       };
     });
-  }, [engine, t]);
+  }, [engine, t, soundEnabled]);
 
   // Physical keyboard support
   useEffect(() => {
@@ -621,7 +624,20 @@ export default function Game() {
 
       </Box>
 
-      <VirtualKeyboard onKey={handleVirtualKey} lang={currentLanguage} open={keyboardOpen} gameSlug="enganchalo" />
+      <VirtualKeyboard
+        onKey={handleVirtualKey}
+        soundEnabled={soundEnabled}
+        onSoundToggle={() => {
+          setSoundEnabled((prev) => {
+            const next = !prev;
+            localStorage.setItem("enganchalo_sound_enabled", String(next));
+            return next;
+          });
+        }}
+        onClose={() => setKeyboardOpen(false)}
+        open={keyboardOpen}
+        gameSlug="enganchalo"
+      />
     </Layout>
   );
 }
